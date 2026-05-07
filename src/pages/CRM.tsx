@@ -301,38 +301,58 @@ const CRM = () => {
 
   const fetchData = async () => {
     setLoading(true);
-      try {
-        const { data: settingsData } = await supabase.from('crm_settings').select('*').maybeSingle();
-        if (settingsData) {
-          setMetaSettings(settingsData);
-          
-          // Se o usuário selecionou QR Code e ainda está desconectado, mostramos as configurações
-          const choiceMade = sessionStorage.getItem('connection_choice_made');
-          
-          if (!choiceMade) {
-            setShowConnectionChoice(true);
-          } else if (settingsData.connection_type === 'meta') {
-            setShowConnectionChoice(false);
-          } else if (settingsData.connection_type === 'wpp-web') {
-            if (settingsData.wpp_web_status === 'connected') {
-              setShowConnectionChoice(false);
-            } else {
-              // Se escolheu QR Code mas não está conectado, forçamos a aba de configurações
-              setShowConnectionChoice(false);
-              setActiveTab('settings');
-            }
-          }
-        } else {
+    try {
+      const { data: settingsData } = await supabase.from('crm_settings').select('*').maybeSingle();
+      if (settingsData) {
+        setMetaSettings(settingsData);
+        
+        const choiceMade = sessionStorage.getItem('connection_choice_made');
+        
+        if (!choiceMade) {
           setShowConnectionChoice(true);
+        } else if (settingsData.connection_type === 'meta') {
+          setShowConnectionChoice(false);
+        } else if (settingsData.connection_type === 'wpp-web') {
+          if (settingsData.wpp_web_status === 'connected') {
+            setShowConnectionChoice(false);
+          } else {
+            setShowConnectionChoice(false);
+            setActiveTab('settings');
+          }
         }
+      } else {
+        setShowConnectionChoice(true);
+      }
 
 
 
 
 
 
+
+
+      // Se for WPP Web, vamos buscar o status e QR do banco de dados periodicamente
+      // sem passar pela Edge Function que dá erro 401
+      const syncWppStatus = async () => {
+        const { data: session } = await supabase.from('wpp_bot_session').select('*').eq('id', 'renda_extra').maybeSingle();
+        if (session) {
+          setMetaSettings((prev: any) => ({
+            ...prev,
+            wpp_web_status: session.status,
+            wpp_web_qr_code: session.qr_code,
+            wpp_web_session_id: session.phone_number
+          }));
+        }
+      };
+
+      if (metaSettings.connection_type === 'wpp-web') {
+        syncWppStatus();
+        const interval = setInterval(syncWppStatus, 5000);
+        return () => clearInterval(interval);
+      }
 
       const { data: metricsData } = await supabase
+
         .from('crm_metrics')
         .select('*')
         .eq('date', new Date().toISOString().split('T')[0])
@@ -448,29 +468,35 @@ const CRM = () => {
     if (!newMessage.trim() || !selectedContact || sendingMessage) return;
     setSendingMessage(true);
     try {
-      const action = metaSettings.connection_type === 'wpp-web' ? 'sendMessage' : 'sendMessage';
-      const functionName = metaSettings.connection_type === 'wpp-web' ? 'wpp-bot-admin' : 'meta-whatsapp-crm';
-      
-      const { data, error } = await supabase.functions.invoke(functionName, {
-        body: { 
-          action: 'sendMessage', 
-          to: selectedContact.wa_id, 
-          phone: selectedContact.wa_id, // Para wpp-bot-admin
-          text: newMessage 
-        }
-      });
-      if (error) throw error;
-      if (!data.success) {
-        throw new Error(data.error || "Erro ao enviar mensagem");
+      if (metaSettings.connection_type === 'wpp-web') {
+        // Envia mensagem via WPP Web escrevendo direto na tabela de mensagens do robô
+        const { error } = await supabase.from('wpp_bot_messages').insert([{
+          phone: selectedContact.wa_id.replace(/\D/g, ""),
+          message: newMessage,
+          status: 'pending',
+          scheduled_for: new Date().toISOString(),
+          is_direct: true
+        }]);
+        if (error) throw error;
+      } else {
+        // Envia via API Meta oficial (Edge Function)
+        const { data, error } = await supabase.functions.invoke('meta-whatsapp-crm', {
+          body: { action: 'sendMessage', to: selectedContact.wa_id, text: newMessage }
+        });
+        if (error) throw error;
+        if (!data.success) throw new Error(data.error || "Erro ao enviar via Meta");
       }
-      await fetchMessages(selectedContact.id);
+      
+      toast({ title: "Mensagem enviada para fila!" });
       setNewMessage('');
+      await fetchMessages(selectedContact.id);
     } catch (err: any) {
       toast({ title: "Erro ao enviar", description: err.message, variant: "destructive" });
     } finally {
       setSendingMessage(false);
     }
   };
+
 
 
   const handleUpdateTemplateKnowledge = async (templateId: string, knowledge: string) => {
