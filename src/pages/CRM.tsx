@@ -1432,8 +1432,9 @@ const CRM = () => {
                   handleSaveSettings({...metaSettings, connection_type: 'wpp-web'});
                   setShowConnectionChoice(false);
                   sessionStorage.setItem('connection_choice_made', 'true');
-                  setActiveTab('settings'); // Abre nas configurações para conectar o QR Code
+                  navigate('/whatsapp-qr');
                 }}
+
               >
 
                 <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
