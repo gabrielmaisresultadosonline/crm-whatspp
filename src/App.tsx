@@ -8,6 +8,8 @@ import { getAdminData } from "./lib/adminConfig";
 import NotFound from "./pages/NotFound";
 import CRM from "./pages/CRM";
 import CRMLogin from "./pages/CRMLogin";
+import WhatsAppQR from "./pages/WhatsAppQR";
+
 
 const queryClient = new QueryClient();
 
@@ -42,6 +44,8 @@ const App = () => (
           <Route path="/login" element={<CRMLogin />} />
           <Route path="/crm" element={<CRM />} />
           <Route path="/crm/login" element={<CRMLogin />} />
+          <Route path="/whatsapp-qr" element={<WhatsAppQR />} />
+
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
