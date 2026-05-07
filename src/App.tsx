@@ -8,6 +8,8 @@ import { getAdminData } from "./lib/adminConfig";
 import NotFound from "./pages/NotFound";
 import CRM from "./pages/CRM";
 import CRMLogin from "./pages/CRMLogin";
+import WhatsAppQR from "./pages/WhatsAppQR";
+
 
 const queryClient = new QueryClient();
 
