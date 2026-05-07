@@ -1501,8 +1501,10 @@ const CRM = () => {
                 <RefreshCcw className="w-4 h-4" />
                 Trocar WhatsApp
               </Button>
-
+            </div>
+            
             {activeTab === 'contacts' && (
+
               <div className="flex gap-2">
                 <Dialog open={isNewStatusDialogOpen} onOpenChange={setIsNewStatusDialogOpen}>
                   <DialogTrigger asChild>
