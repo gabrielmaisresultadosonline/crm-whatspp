@@ -1322,20 +1322,20 @@ const CRM = () => {
           </SidebarHeader>
           <SidebarContent>
             <SidebarGroup>
-              <SidebarGroupLabel className="px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-bold">Navegação</SidebarGroupLabel>
+              <SidebarGroupLabel className="px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-bold">Navigation</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   {[
                     { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
-                    { id: 'contacts', label: 'Conversas', icon: MessageSquare },
-                    { id: 'contact-list', label: 'Contatos', icon: Users },
-                    { id: 'broadcast', label: 'Disparador', icon: Zap },
-                    { id: 'scheduling', label: 'Agendamentos', icon: Calendar },
-                    { id: 'flows', label: 'Fluxos', icon: GitBranch },
+                    { id: 'contacts', label: 'Conversations', icon: MessageSquare },
+                    { id: 'contact-list', label: 'Contacts', icon: Users },
+                    { id: 'broadcast', label: 'Broadcaster', icon: Zap },
+                    { id: 'scheduling', label: 'Scheduling', icon: Calendar },
+                    { id: 'flows', label: 'Flows', icon: GitBranch },
                     { id: 'templates', label: 'Templates', icon: FileText },
-                    { id: 'ai-agent', label: 'Agente IA', icon: Bot },
+                    { id: 'ai-agent', label: 'AI Agent', icon: Bot },
                     { id: 'webhooks', label: 'Webhooks (API)', icon: Webhook },
-                    { id: 'settings', label: 'Ajustes', icon: Settings },
+                    { id: 'settings', label: 'Settings', icon: Settings },
                   ].map((item) => (
                     <SidebarMenuItem key={item.id}>
                       <SidebarMenuButton 
@@ -1356,8 +1356,8 @@ const CRM = () => {
             </SidebarGroup>
           </SidebarContent>
           <SidebarFooter className="border-t p-4">
-            <Button variant="ghost" className="w-full justify-start text-destructive hover:bg-destructive/10 hover:text-destructive" onClick={() => { logoutAdmin(); navigate('/crm/login'); }}>
-              <LogOut className="mr-2 h-4 w-4" /> Sair
+            <Button variant="ghost" className="w-full justify-start text-destructive hover:bg-destructive/10 hover:text-destructive" onClick={() => { logoutAdmin(); navigate('/login'); }}>
+              <LogOut className="mr-2 h-4 w-4" /> Logout
             </Button>
           </SidebarFooter>
         </Sidebar>
