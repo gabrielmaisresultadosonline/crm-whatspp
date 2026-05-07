@@ -26,7 +26,7 @@ const DEFAULT_SESSION = {
 };
 
 const AdminActionSchema = z.object({
-  action: z.enum(["getStatus", "requestQr", "logout", "saveSettings", "retryMessage", "deleteMessage", "enqueueLead", "sendNow", "sendTest"]),
+  action: z.enum(["getStatus", "requestQr", "logout", "saveSettings", "retryMessage", "deleteMessage", "enqueueLead", "sendNow", "sendTest", "sendMessage", "restart"]),
   adminToken: z.string().optional(),
   message_template: z.string().max(4000).optional(),
   delay_minutes: z.coerce.number().int().min(1).max(10080).optional(),
@@ -35,6 +35,13 @@ const AdminActionSchema = z.object({
   lead_id: z.string().uuid().nullable().optional(),
   lead_name: z.string().max(255).nullable().optional(),
   phone: z.string().max(40).optional(),
+  to: z.string().optional(),
+  text: z.string().optional(),
+  mediaUrl: z.string().url().nullable().optional(),
+  mediaType: z.enum(["image", "video", "audio", "document"]).nullable().optional(),
+  fileName: z.string().optional(),
+  isVoice: z.boolean().optional(),
+  buttons: z.array(z.object({ id: z.string(), text: z.string() })).optional(),
 });
 
 async function readBody(req: Request) {
