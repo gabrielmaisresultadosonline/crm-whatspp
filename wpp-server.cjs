@@ -1,127 +1,111 @@
 const { Client, LocalAuth } = require('whatsapp-web.js');
-const qrcode = require('qrcode-terminal');
+const qrcodeTerminal = require('qrcode-terminal');
+const QRCode = require('qrcode');
 const fetch = require('node-fetch');
 
 const SUPABASE_URL = 'https://sepmaqhdiextgbtxyxrx.supabase.co';
-const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNlcG1hcWhkaWV4dGdidHh5eHJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNTAyNjYsImV4cCI6MjA5MzcyNjI2Nn0.w0jxw0jokQuNubdnYZk4LextB_eliLyB2VdB89dJs3c';
-const SESSION_ID = 'renda_extra';
+const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNlcG1hcWhkaWV4dGdidHh5eHJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTY4ODQyNzEsImV4cCI6MjAzMjQ2MDI3MX0.mI-5O-yS6_y-0S8X7Y-S0S-O-yS6_y-0S8X7Y-S0S';
 
-let client = null;
+const client = new Client({
+    authStrategy: new LocalAuth({ clientId: "renda_extra" }),
+    puppeteer: {
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+    }
+});
 
-async function syncStatus(status, details = {}) {
-    console.log(`[DEBUG] Sincronizando no banco -> Status: ${status}`);
+async function updateSession(data) {
     try {
-        const payload = { 
-            status, 
-            phone_number: client?.info?.wid?.user || null,
-            updated_at: new Date().toISOString(),
-            ...details 
-        };
-        
-        const response = await fetch(`${SUPABASE_URL}/rest/v1/wpp_bot_session?id=eq.${SESSION_ID}`, {
+        await fetch(`${SUPABASE_URL}/rest/v1/wpp_bot_session?id=eq.renda_extra`, {
             method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', 'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}` },
+            body: JSON.stringify(data)
+        });
+    } catch (e) { console.error("Erro ao atualizar sessão:", e); }
+}
+
+async function syncToCRM(msg) {
+    try {
+        const chat = await msg.getChat();
+        const contact = await msg.getContact();
+        const waId = msg.from.includes('@g.us') ? msg.from : (msg.fromMe ? msg.to : msg.from);
+        
+        await fetch(`${SUPABASE_URL}/rest/v1/crm_contacts`, {
+            method: 'POST',
             headers: { 
                 'Content-Type': 'application/json', 
                 'apikey': ANON_KEY, 
                 'Authorization': `Bearer ${ANON_KEY}`,
-                'Prefer': 'return=minimal' 
+                'Prefer': 'resolution=merge-duplicates'
             },
-            body: JSON.stringify(payload)
+            body: JSON.stringify({
+                wa_id: waId,
+                name: chat.name || contact.pushname || waId.split('@')[0],
+                last_interaction: new Date().toISOString(),
+                status: 'responded'
+            })
         });
-        
-        if (response.ok) {
-            console.log(`[DEBUG] Banco atualizado com sucesso!`);
-        } else {
-            const text = await response.text();
-            console.error(`[DEBUG] Erro ao atualizar banco: ${response.status} - ${text}`);
-        }
-    } catch (e) { 
-        console.error('[DEBUG] Erro de rede na sincronização:', e.message); 
-    }
+
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/crm_contacts?wa_id=eq.${waId}`, {
+            headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}` }
+        });
+        const contacts = await res.json();
+        if (!contacts.length) return;
+
+        await fetch(`${SUPABASE_URL}/rest/v1/crm_messages`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}` },
+            body: JSON.stringify({
+                contact_id: contacts[0].id,
+                content: msg.body,
+                direction: msg.fromMe ? 'outgoing' : 'incoming',
+                type: 'text',
+                status: 'delivered',
+                created_at: new Date(msg.timestamp * 1000).toISOString()
+            })
+        });
+    } catch (e) { console.error("Erro na sincronização:", e); }
 }
 
-function startBot() {
-    if (client) {
-        console.log('[DEBUG] Bot já em execução ou iniciando...');
-        return;
-    }
+client.on('qr', async (qr) => {
+    const qrImage = await QRCode.toDataURL(qr);
+    console.log('📱 NOVO QR CODE GERADO!');
+    qrcodeTerminal.generate(qr, { small: true });
+    updateSession({ qr_code: qrImage, status: 'connecting', updated_at: new Date() });
+});
+
+client.on('ready', async () => {
+    console.log('✅ WhatsApp Conectado!');
+    updateSession({ status: 'connected', qr_code: null, updated_at: new Date() });
     
-    console.log('\n[DEBUG] 🚀 INICIANDO NAVEGADOR WHATSAPP...');
-    client = new Client({
-        authStrategy: new LocalAuth({ clientId: SESSION_ID }),
-        puppeteer: {
-            headless: true,
-            args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu', '--disable-dev-shm-usage']
+    const chats = await client.getChats();
+    console.log(`📦 Sincronizando ${chats.length} chats...`);
+    for (const chat of chats.slice(0, 30)) {
+        const messages = await chat.fetchMessages({ limit: 20 });
+        for (const m of messages) {
+            await syncToCRM(m);
         }
-    });
+    }
+});
 
-    client.on('qr', (qr) => {
-        console.log('\n[DEBUG] 📱 QR CODE GERADO! ESCANEIE NO CRM.');
-        qrcode.generate(qr, { small: true });
-        // Importante: Detalhes do QR Code devem ir para o banco
-        syncStatus('connecting', { qr_code: qr, request_qr: false });
-    });
+client.on('message', syncToCRM);
+client.on('message_create', (msg) => { if(msg.fromMe) syncToCRM(msg); });
 
-    client.on('ready', () => {
-        console.log('\n[DEBUG] ✅ WHATSAPP CONECTADO COM SUCESSO!');
-        syncStatus('connected', { qr_code: null, request_qr: false });
-    });
+client.initialize();
 
-    client.on('authenticated', () => {
-        console.log('[DEBUG] 🔓 Autenticado!');
-    });
-
-    client.on('disconnected', (reason) => {
-        console.log('[DEBUG] 🔌 WhatsApp desconectado:', reason);
-        syncStatus('disconnected', { qr_code: null });
-        client = null;
-    });
-
-    client.initialize().catch(err => {
-        console.error('[DEBUG] Erro fatal na inicialização:', err.message);
-        client = null;
-    });
-}
-
-// Verifica comandos pendentes
 setInterval(async () => {
     try {
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/wpp_bot_commands?processed=eq.false&limit=1`, {
-            headers: { 
-                'apikey': ANON_KEY,
-                'Authorization': `Bearer ${ANON_KEY}`
-            }
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/wpp_bot_messages?status=eq.pending`, {
+            headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}` }
         });
-        const commands = await res.json();
-        
-        if (Array.isArray(commands) && commands.length > 0) {
-            const cmd = commands[0];
-            console.log(`[DEBUG] Comando recebido: ${cmd.command}`);
-            
-            if (cmd.command === 'requestQr' || cmd.command === 'restart') {
-                if (client) {
-                    console.log('[DEBUG] Reiniciando cliente existente...');
-                    await client.destroy().catch(() => {});
-                    client = null;
-                }
-                startBot();
-            }
-
-            // Marca comando como lido
-            await fetch(`${SUPABASE_URL}/rest/v1/wpp_bot_commands?id=eq.${cmd.id}`, {
+        const msgs = await res.json();
+        for (const m of msgs) {
+            await client.sendMessage(`${m.phone}@c.us`, m.message);
+            await fetch(`${SUPABASE_URL}/rest/v1/wpp_bot_messages?id=eq.${m.id}`, {
                 method: 'PATCH',
-                headers: { 
-                    'Content-Type': 'application/json', 
-                    'apikey': ANON_KEY,
-                    'Authorization': `Bearer ${ANON_KEY}`
-                },
-                body: JSON.stringify({ processed: true })
+                headers: { 'Content-Type': 'application/json', 'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}` },
+                body: JSON.stringify({ status: 'sent', sent_at: new Date() })
             });
         }
-    } catch (e) {
-        // Silencioso
-    }
-}, 3000);
-
-console.log('\n[DEBUG] 📡 SERVIDOR WPP-WEB ONLINE E AGUARDANDO COMANDOS...');
-syncStatus('disconnected'); // Reset inicial
+    } catch (e) {}
+}, 5000);
