@@ -63,7 +63,7 @@ const CRMLogin = () => {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Digite seu email"
+              placeholder="Enter your email"
               className="bg-secondary/50"
               required
             />
@@ -72,7 +72,7 @@ const CRMLogin = () => {
           <div className="space-y-2">
             <Label htmlFor="password" className="flex items-center gap-2">
               <Lock className="w-4 h-4" />
-              Senha
+              Password
             </Label>
             <Input
               id="password"
