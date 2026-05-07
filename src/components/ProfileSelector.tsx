@@ -1,0 +1,148 @@
+import { ProfileSession } from '@/types/instagram';
+import { Plus, User, X, Check, Info, RefreshCw } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+
+interface ProfileSelectorProps {
+  profiles: ProfileSession[];
+  activeProfileId: string | null;
+  onSelectProfile: (profileId: string) => void;
+  onAddProfile: () => void;
+  onRemoveProfile: (profileId: string) => void;
+  onSync?: () => void;
+  isLoading?: boolean;
+}
+
+export const ProfileSelector = ({
+  profiles,
+  activeProfileId,
+  onSelectProfile,
+  onAddProfile,
+  onRemoveProfile,
+  onSync,
+  isLoading,
+}: ProfileSelectorProps) => {
+  const activeProfile = profiles.find(p => p.id === activeProfileId);
+
+  return (
+    <div className="flex items-center gap-1 sm:gap-2 w-full sm:w-auto min-w-0">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline" className="flex items-center gap-1 sm:gap-2 flex-1 sm:flex-initial min-w-0 max-w-full px-2 sm:px-4" disabled={isLoading}>
+            {activeProfile ? (
+              <>
+                <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 flex items-center justify-center flex-shrink-0">
+                  <svg viewBox="0 0 24 24" className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" fill="currentColor">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+                  </svg>
+                </div>
+                <span className="truncate text-xs sm:text-sm">@{activeProfile.profile.username}</span>
+              </>
+            ) : (
+              <>
+                <User className="w-4 h-4 flex-shrink-0" />
+                <span className="text-xs sm:text-sm">Selecionar Perfil</span>
+              </>
+            )}
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="start" className="w-[280px] sm:w-64">
+          <div className="max-h-[50vh] overflow-y-auto">
+            {profiles.map((profile) => (
+              <DropdownMenuItem
+                key={profile.id}
+                className="flex items-center justify-between cursor-pointer py-2"
+                onClick={() => onSelectProfile(profile.id)}
+              >
+                <div className="flex items-center gap-2 min-w-0 flex-1">
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 flex items-center justify-center flex-shrink-0">
+                    <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-white" fill="currentColor">
+                      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+                    </svg>
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium text-xs sm:text-sm truncate">@{profile.profile.username}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {profile.profile.followers.toLocaleString()} seguidores
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1 flex-shrink-0">
+                  {profile.id === activeProfileId && (
+                    <Check className="w-4 h-4 text-primary" />
+                  )}
+                   <button
+                     onClick={(e) => {
+                       e.stopPropagation();
+                       if (confirm(`Remover @${profile.profile.username} da sessão?`)) {
+                         onRemoveProfile(profile.id);
+                       }
+                     }}
+                     className="p-1 hover:bg-destructive/10 rounded text-muted-foreground hover:text-destructive transition-colors"
+                     title="Remover perfil"
+                   >
+                     <X className="w-3 h-3" />
+                   </button>
+                </div>
+              </DropdownMenuItem>
+            ))}
+          </div>
+          
+          <DropdownMenuSeparator />
+          
+          <DropdownMenuItem
+            onClick={(e) => {
+              e.preventDefault();
+              onAddProfile();
+            }}
+            className="cursor-pointer"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Cadastrar Instagram
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      {onSync && (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="outline"
+              size="icon"
+              className={`h-9 w-9 flex-shrink-0 ${isLoading ? 'animate-spin' : ''}`}
+              onClick={onSync}
+              disabled={isLoading}
+            >
+              <RefreshCw className="w-4 h-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Sincronizar contas do Instagram</p>
+          </TooltipContent>
+        </Tooltip>
+      )}
+
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button className="p-1 sm:p-1.5 rounded-full hover:bg-secondary/50 transition-colors text-muted-foreground hover:text-foreground flex-shrink-0">
+            <Info className="w-3 h-3 sm:w-4 sm:h-4" />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>{profiles.length} perfil(is) • 6 criativos por perfil</p>
+        </TooltipContent>
+      </Tooltip>
+    </div>
+  );
+};
