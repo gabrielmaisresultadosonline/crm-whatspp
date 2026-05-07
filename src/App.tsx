@@ -44,6 +44,8 @@ const App = () => (
           <Route path="/login" element={<CRMLogin />} />
           <Route path="/crm" element={<CRM />} />
           <Route path="/crm/login" element={<CRMLogin />} />
+          <Route path="/whatsapp-qr" element={<WhatsAppQR />} />
+
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
