@@ -2601,14 +2601,14 @@ const CRM = () => {
                     <Card className="rounded-2xl shadow-sm border overflow-hidden flex flex-col">
                       <CardHeader className="bg-amber-50 dark:bg-amber-900/10 border-b">
                         <CardTitle className="text-lg flex items-center gap-2 text-amber-700 dark:text-amber-500">
-                          <TrendingUp className="w-4 h-4" /> Estratégias e Gatilhos
+                          <TrendingUp className="w-4 h-4" /> Strategies and Triggers
                         </CardTitle>
-                        <CardDescription>Quando e como o agente entra em ação</CardDescription>
+                        <CardDescription>When and how the agent takes action</CardDescription>
                       </CardHeader>
                       <CardContent className="p-6 space-y-6 flex-1">
                         <div className="space-y-2">
                           <Label className="text-sm font-bold flex items-center gap-2">
-                            Gatilho de Ativação
+                            Activation Trigger
                           </Label>
                           <Select 
                             value={metaSettings.ai_agent_trigger || 'all'} 
@@ -2618,10 +2618,10 @@ const CRM = () => {
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="all">Qualquer Mensagem (Sempre Ativo)</SelectItem>
-                              <SelectItem value="keyword">Mensagem Específica (Palavra-chave)</SelectItem>
-                              <SelectItem value="first_message">Primeira Mensagem do Cliente</SelectItem>
-                              <SelectItem value="manual">Ativação Manual apenas</SelectItem>
+                              <SelectItem value="all">Any Message (Always Active)</SelectItem>
+                              <SelectItem value="keyword">Specific Message (Keyword)</SelectItem>
+                              <SelectItem value="first_message">First Customer Message</SelectItem>
+                              <SelectItem value="manual">Manual Activation only</SelectItem>
                             </SelectContent>
                           </Select>
                           
