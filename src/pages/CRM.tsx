@@ -2571,12 +2571,12 @@ const CRM = () => {
                             value={metaSettings.openai_api_key}
                             onChange={(e) => setMetaSettings({...metaSettings, openai_api_key: e.target.value})}
                           />
-                          <p className="text-[10px] text-muted-foreground italic">Use uma chave da OpenAI (GPT-4o recomendado).</p>
+                          <p className="text-[10px] text-muted-foreground italic">Use an OpenAI key (GPT-4o recommended).</p>
                         </div>
 
                         <div className="space-y-2">
                           <Label className="text-sm font-bold flex items-center gap-2">
-                            <Zap className="w-4 h-4 text-amber-500" /> Modo de Operação
+                            <Zap className="w-4 h-4 text-amber-500" /> Operation Mode
                           </Label>
                           <Select 
                             value={metaSettings.ai_operation_mode || 'chat'} 
@@ -2586,13 +2586,13 @@ const CRM = () => {
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="chat">Apenas Conversar (I.A. Ativa)</SelectItem>
-                              <SelectItem value="monitor">Apenas Qualificar (Passiva)</SelectItem>
-                              <SelectItem value="hybrid">Híbrido (Conversa e Qualifica)</SelectItem>
+                              <SelectItem value="chat">Chat Only (AI Active)</SelectItem>
+                              <SelectItem value="monitor">Qualify Only (Passive)</SelectItem>
+                              <SelectItem value="hybrid">Hybrid (Chat and Qualify)</SelectItem>
                             </SelectContent>
                           </Select>
                           <p className="text-[10px] text-muted-foreground italic">
-                            "Passiva" fará com que a IA não envie mensagens, apenas analise o contato.
+                            "Passive" will make the AI not send messages, only analyze the contact.
                           </p>
                         </div>
                       </CardContent>
