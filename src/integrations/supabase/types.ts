@@ -4079,11 +4079,17 @@ export type Database = {
       }
       wpp_bot_messages: {
         Row: {
+          buttons: Json | null
           created_at: string
           error_message: string | null
+          filename: string | null
           id: string
+          is_direct: boolean | null
+          isvoice: boolean | null
           lead_id: string | null
           lead_name: string | null
+          mediatype: string | null
+          mediaurl: string | null
           message: string
           phone: string
           scheduled_for: string
@@ -4092,11 +4098,17 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          buttons?: Json | null
           created_at?: string
           error_message?: string | null
+          filename?: string | null
           id?: string
+          is_direct?: boolean | null
+          isvoice?: boolean | null
           lead_id?: string | null
           lead_name?: string | null
+          mediatype?: string | null
+          mediaurl?: string | null
           message: string
           phone: string
           scheduled_for?: string
@@ -4105,11 +4117,17 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          buttons?: Json | null
           created_at?: string
           error_message?: string | null
+          filename?: string | null
           id?: string
+          is_direct?: boolean | null
+          isvoice?: boolean | null
           lead_id?: string | null
           lead_name?: string | null
+          mediatype?: string | null
+          mediaurl?: string | null
           message?: string
           phone?: string
           scheduled_for?: string
