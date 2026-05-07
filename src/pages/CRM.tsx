@@ -1529,12 +1529,12 @@ const CRM = () => {
                 {kanbanView ? (
                   <div className="flex-1 overflow-x-auto p-4 flex gap-4 bg-muted/5">
                     {(kanbanStatuses.length > 0 ? kanbanStatuses : [
-                      { value: 'new', label: 'Novo Lead', color: 'blue' },
-                      { value: 'responded', label: 'Em Atendimento', color: 'yellow' },
-                      { value: 'qualified', label: 'Qualificado', color: 'purple' },
-                      { value: 'human', label: '+ HUMANO', color: 'orange' },
-                      { value: 'closed', label: 'Venda Fechada', color: 'green' },
-                      { value: 'lost', label: 'Perdido', color: 'red' }
+                      { value: 'new', label: 'New Lead', color: 'blue' },
+                      { value: 'responded', label: 'In Service', color: 'yellow' },
+                      { value: 'qualified', label: 'Qualified', color: 'purple' },
+                      { value: 'human', label: '+ HUMAN', color: 'orange' },
+                      { value: 'closed', label: 'Closed Sale', color: 'green' },
+                      { value: 'lost', label: 'Lost', color: 'red' }
                     ]).map(status => (
                       <div 
                         key={status.value} 
