@@ -1372,7 +1372,9 @@ const CRM = () => {
                   setMetaSettings({...metaSettings, connection_type: 'meta'});
                   handleSaveSettings({...metaSettings, connection_type: 'meta'});
                   setShowConnectionChoice(false);
+                  sessionStorage.setItem('connection_choice_made', 'true');
                 }}
+
               >
                 <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                   <Webhook className="w-24 h-24" />
