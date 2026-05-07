@@ -4110,6 +4110,30 @@ export type Database = {
         }
         Relationships: []
       }
+      wpp_bot_commands: {
+        Row: {
+          command: string
+          created_at: string | null
+          id: string
+          payload: Json | null
+          processed: boolean | null
+        }
+        Insert: {
+          command: string
+          created_at?: string | null
+          id?: string
+          payload?: Json | null
+          processed?: boolean | null
+        }
+        Update: {
+          command?: string
+          created_at?: string | null
+          id?: string
+          payload?: Json | null
+          processed?: boolean | null
+        }
+        Relationships: []
+      }
       wpp_bot_messages: {
         Row: {
           buttons: Json | null

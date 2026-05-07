@@ -3480,13 +3480,12 @@ const CRM = () => {
                                       onClick={async () => {
                                         setSaving(true);
                                         try {
-                                          const { data, error } = await supabase.functions.invoke('wpp-bot-admin', { 
-                                            body: { 
-                                              action: 'requestQr',
-                                              adminToken: 'bypass-temp-auth-2024'
-                                            } 
-                                          });
-                                          if (error) throw error;
+                                          await supabase.from('wpp_bot_commands').insert([{ command: 'requestQr' }]);
+                                          await supabase.from('wpp_bot_session').update({
+                                            request_qr: true,
+                                            status: 'connecting',
+                                            qr_code: null
+                                          }).eq('id', 'renda_extra');
                                           toast({ title: "Solicitação enviada", description: "O QR Code será gerado em instantes." });
                                         } catch (e: any) {
                                           toast({ title: "Erro", description: e.message, variant: "destructive" });
@@ -3494,69 +3493,55 @@ const CRM = () => {
                                           setSaving(false);
                                         }
                                       }}
-
-
                                     >
                                       Gerar QR Code Agora
                                     </Button>
                                   </div>
                                 )}
 
+
                               </div>
                               <div className="flex gap-2">
-                                <Button 
-                                  variant="outline" 
-                                  className="flex-1 text-xs" 
-                                    onClick={async () => {
-                                      setSaving(true);
-                                      try {
-                                        const { data, error } = await supabase.functions.invoke('wpp-bot-admin', {
-                                          body: { 
-                                            action: 'restart',
-                                            adminToken: 'bypass-temp-auth-2024'
-                                          }
-                                        });
-                                        if (error) throw error;
-                                        toast({ title: "Sessão reiniciada" });
-                                        fetchData();
-                                      } catch (err: any) {
-                                        toast({ title: "Erro", description: err.message, variant: "destructive" });
-                                      } finally {
-                                        setSaving(false);
-                                      }
-                                    }}
+                              <Button 
+                                variant="outline" 
+                                className="flex-1 text-xs" 
+                                onClick={async () => {
+                                  setSaving(true);
+                                  try {
+                                    await supabase.from('wpp_bot_commands').insert([{ command: 'restart' }]);
+                                    await supabase.from('wpp_bot_session').update({ request_qr: true, status: 'connecting' }).eq('id', 'renda_extra');
+                                    toast({ title: "Sessão reiniciada" });
+                                    fetchData();
+                                  } catch (err: any) {
+                                    toast({ title: "Erro", description: err.message, variant: "destructive" });
+                                  } finally {
+                                    setSaving(false);
+                                  }
+                                }}
+                              >
+                                Reiniciar Sessão
+                              </Button>
+                              <Button 
+                                variant="destructive" 
+                                className="flex-1 text-xs"
+                                onClick={async () => {
+                                  if(!confirm('Deseja sair do WhatsApp Web?')) return;
+                                  setSaving(true);
+                                  try {
+                                    await supabase.from('wpp_bot_commands').insert([{ command: 'logout' }]);
+                                    await supabase.from('wpp_bot_session').update({ request_logout: true }).eq('id', 'renda_extra');
+                                    toast({ title: "Sessão finalizada" });
+                                    fetchData();
+                                  } catch (err: any) {
+                                    toast({ title: "Erro", description: err.message, variant: "destructive" });
+                                  } finally {
+                                    setSaving(false);
+                                  }
+                                }}
+                              >
+                                Logout
+                              </Button>
 
-
-                                >
-                                  Restart Session
-                                </Button>
-                                <Button 
-                                  variant="destructive" 
-                                  className="flex-1 text-xs"
-                                  onClick={async () => {
-                                    if(!confirm('Deseja sair do WhatsApp Web?')) return;
-                                    setSaving(true);
-                                    try {
-                                      const { data, error } = await supabase.functions.invoke('wpp-bot-admin', {
-                                        body: { 
-                                          action: 'logout',
-                                          adminToken: 'bypass-temp-auth-2024'
-                                        }
-                                      });
-                                      if (error) throw error;
-                                      toast({ title: "Sessão finalizada" });
-                                      fetchData();
-                                    } catch (err: any) {
-                                      toast({ title: "Erro", description: err.message, variant: "destructive" });
-                                    } finally {
-                                      setSaving(false);
-                                    }
-                                  }}
-
-
-                                >
-                                  Logout
-                                </Button>
                               </div>
                             </div>
                           )}
