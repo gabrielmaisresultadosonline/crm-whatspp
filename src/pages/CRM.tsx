@@ -468,29 +468,35 @@ const CRM = () => {
     if (!newMessage.trim() || !selectedContact || sendingMessage) return;
     setSendingMessage(true);
     try {
-      const action = metaSettings.connection_type === 'wpp-web' ? 'sendMessage' : 'sendMessage';
-      const functionName = metaSettings.connection_type === 'wpp-web' ? 'wpp-bot-admin' : 'meta-whatsapp-crm';
-      
-      const { data, error } = await supabase.functions.invoke(functionName, {
-        body: { 
-          action: 'sendMessage', 
-          to: selectedContact.wa_id, 
-          phone: selectedContact.wa_id, // Para wpp-bot-admin
-          text: newMessage 
-        }
-      });
-      if (error) throw error;
-      if (!data.success) {
-        throw new Error(data.error || "Erro ao enviar mensagem");
+      if (metaSettings.connection_type === 'wpp-web') {
+        // Envia mensagem via WPP Web escrevendo direto na tabela de mensagens do robô
+        const { error } = await supabase.from('wpp_bot_messages').insert([{
+          phone: selectedContact.wa_id.replace(/\D/g, ""),
+          message: newMessage,
+          status: 'pending',
+          scheduled_for: new Date().toISOString(),
+          is_direct: true
+        }]);
+        if (error) throw error;
+      } else {
+        // Envia via API Meta oficial (Edge Function)
+        const { data, error } = await supabase.functions.invoke('meta-whatsapp-crm', {
+          body: { action: 'sendMessage', to: selectedContact.wa_id, text: newMessage }
+        });
+        if (error) throw error;
+        if (!data.success) throw new Error(data.error || "Erro ao enviar via Meta");
       }
-      await fetchMessages(selectedContact.id);
+      
+      toast({ title: "Mensagem enviada para fila!" });
       setNewMessage('');
+      await fetchMessages(selectedContact.id);
     } catch (err: any) {
       toast({ title: "Erro ao enviar", description: err.message, variant: "destructive" });
     } finally {
       setSendingMessage(false);
     }
   };
+
 
 
   const handleUpdateTemplateKnowledge = async (templateId: string, knowledge: string) => {
