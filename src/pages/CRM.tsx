@@ -1426,9 +1426,10 @@ const CRM = () => {
                 </div>
               </Card>
 
-              <div className="md:col-span-2 text-center mt-8">
-                <p className="text-xs text-muted-foreground">Você poderá alterar o tipo de conexão a qualquer momento nas configurações.</p>
+              <div className="md:col-span-2 text-center mt-8 relative z-10">
+                <p className="text-xs text-muted-foreground">Você poderá alterar o tipo de conexão a qualquer momento clicando em "Trocar WhatsApp".</p>
               </div>
+
             </div>
           </div>
         )}
