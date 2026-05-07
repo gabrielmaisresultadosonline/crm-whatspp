@@ -1635,7 +1635,7 @@ const CRM = () => {
                         <div className="relative">
                           <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                           <Input 
-                            placeholder="Buscar contatos..." 
+                            placeholder="Search contacts..." 
                             className="pl-9 bg-muted/50 border-none h-10"
                             onChange={e => setStatusFilter(e.target.value || 'all')} 
                           />
@@ -1644,7 +1644,7 @@ const CRM = () => {
                           <AccordionItem value="tags" className="border-none">
                             <AccordionTrigger className="py-2 hover:no-underline text-xs font-semibold text-muted-foreground flex gap-2">
                               <ListFilter className="w-3.5 h-3.5" />
-                              Filtrar por Etiquetas
+                              Filter by Tags
                             </AccordionTrigger>
                             <AccordionContent>
                               <div className="flex flex-wrap gap-1 pb-1 pt-1">
