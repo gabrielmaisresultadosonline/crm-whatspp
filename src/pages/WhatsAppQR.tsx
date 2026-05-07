@@ -364,12 +364,41 @@ const WhatsAppQR = () => {
                               <Button variant="ghost" size="icon" className="rounded-xl"><MoreHorizontal className="w-5 h-5" /></Button>
                            </div>
                         </div>
-                        <div className="flex-1 p-6 space-y-4 overflow-y-auto">
-                           <div className="flex justify-center">
-                              <Badge variant="outline" className="bg-muted/20 text-[10px] font-medium py-1 px-4">Histórico Sincronizado</Badge>
+                        <ScrollArea className="flex-1 p-6">
+                           <div className="space-y-4">
+                              {chatMessages.length > 0 ? (
+                                chatMessages.map((msg) => (
+                                  <div 
+                                    key={msg.id} 
+                                    className={cn(
+                                      "flex flex-col max-w-[80%] space-y-1",
+                                      msg.direction === 'outgoing' ? "ml-auto items-end" : "items-start"
+                                    )}
+                                  >
+                                    <div className={cn(
+                                      "px-4 py-2 rounded-2xl text-sm shadow-sm",
+                                      msg.direction === 'outgoing' 
+                                        ? "bg-primary text-white rounded-tr-none" 
+                                        : "bg-card border rounded-tl-none"
+                                    )}>
+                                      {msg.content}
+                                    </div>
+                                    <span className="text-[9px] text-muted-foreground">
+                                      {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                    </span>
+                                  </div>
+                                ))
+                              ) : (
+                                <div className="text-center space-y-4 py-12">
+                                  <div className="w-12 h-12 bg-primary/5 rounded-full flex items-center justify-center mx-auto">
+                                    <RefreshCcw className="w-6 h-6 text-primary/40" />
+                                  </div>
+                                  <p className="text-xs text-muted-foreground">Carregando histórico de mensagens...</p>
+                                </div>
+                              )}
                            </div>
-                           <p className="text-center text-xs text-muted-foreground p-8">Sincronizando mensagens do celular...</p>
-                        </div>
+                        </ScrollArea>
+
                         <div className="p-4 bg-card border-t flex gap-3 items-center">
                           <Input 
                             value={newMessage}
