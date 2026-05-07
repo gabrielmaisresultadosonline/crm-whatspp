@@ -684,6 +684,21 @@ export type Database = {
           },
         ]
       }
+      crm_auth_config: {
+        Row: {
+          bypass_token: string | null
+          id: string
+        }
+        Insert: {
+          bypass_token?: string | null
+          id?: string
+        }
+        Update: {
+          bypass_token?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
       crm_broadcasts: {
         Row: {
           buttons: Json | null

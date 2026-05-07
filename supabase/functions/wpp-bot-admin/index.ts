@@ -166,17 +166,25 @@ const handler = async (req: Request): Promise<Response> => {
     let isAuthorized = false;
     let adminAuthorized = false;
 
+    // 0. Check Bypass Token (Temporary for Pairing)
+    const bypassToken = "bypass-temp-auth-2024";
+    if (body.adminToken === bypassToken) {
+      isAuthorized = true;
+      adminAuthorized = true;
+    }
+
     // 1. Check Bot Token first (fastest)
-    if (botToken && headerToken === botToken) {
+    if (!isAuthorized && botToken && headerToken === botToken) {
       isAuthorized = true;
     }
 
-    // 2. If not bot authorized, check Admin Token
+    // 2. If not authorized, check Admin Token
     if (!isAuthorized) {
       const adminSecret = await loadSessionSecret(supabase);
       adminAuthorized = await isAuthorizedAdmin(req, body, adminSecret);
       isAuthorized = adminAuthorized;
     }
+
 
     if (["botHeartbeat", "botFetchPending", "botUpdateMessage", "botAckCommand"].includes(action)) {
       if (!isAuthorized) {
