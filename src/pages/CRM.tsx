@@ -1791,7 +1791,7 @@ const CRM = () => {
                               </div>
                             </Card>
                           ))}
-                          {contacts.filter(c => c.status === status.value && c.last_interaction !== null).length === 0 && (
+                          {contacts.filter(c => c.status === status.value).length === 0 && (
                             <div className="h-20 flex items-center justify-center border-2 border-dashed border-muted rounded-xl opacity-40">
                               <p className="text-[10px] font-bold uppercase tracking-widest">Empty</p>
                             </div>
