@@ -65,8 +65,10 @@ import {
   Layers,
   CreditCard,
   Copy,
-  Pencil
+  Pencil,
+  QrCode
 } from "lucide-react";
+
 import TemplatePreview from "@/components/whatsapp/TemplatePreview";
 import { Logo } from "@/components/Logo";
 import { Badge } from "@/components/ui/badge";
