@@ -1497,13 +1497,17 @@ const CRM = () => {
               <Button 
                 variant="outline" 
                 size="sm" 
-                onClick={() => setShowConnectionChoice(true)}
-                className="hidden sm:flex items-center gap-2 rounded-xl bg-primary/5 hover:bg-primary/10 border-primary/20 text-primary font-bold transition-all hover:scale-105"
+                onClick={() => {
+                  sessionStorage.removeItem('connection_choice_made');
+                  setShowConnectionChoice(true);
+                }}
+                className="flex items-center gap-2 rounded-xl bg-primary/5 hover:bg-primary/10 border-primary/20 text-primary font-bold transition-all hover:scale-105"
               >
                 <RefreshCcw className="w-4 h-4" />
                 Trocar WhatsApp
               </Button>
             </div>
+
             
             {activeTab === 'contacts' && (
 
