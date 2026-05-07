@@ -283,9 +283,13 @@ const CRM = () => {
   useEffect(() => {
     let filtered = contacts;
     
-    // In the "Conversations" tab, only show contacts that actually have an interaction history
+    // In the "Conversations" tab, show everyone, prioritizing those with interaction
     if (activeTab === 'contacts') {
-      filtered = filtered.filter(c => c.last_interaction !== null);
+      filtered = [...filtered].sort((a, b) => {
+        if (a.last_interaction && !b.last_interaction) return -1;
+        if (!a.last_interaction && b.last_interaction) return 1;
+        return 0;
+      });
     }
 
     if (statusFilter !== 'all') {
