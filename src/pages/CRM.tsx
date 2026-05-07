@@ -1385,22 +1385,22 @@ const CRM = () => {
                 <Dialog open={isNewStatusDialogOpen} onOpenChange={setIsNewStatusDialogOpen}>
                   <DialogTrigger asChild>
                     <Button variant="outline" size="sm" className="bg-primary/5 hover:bg-primary/10 border-primary/20">
-                      <Plus className="w-4 h-4 mr-2" /> New Tag
+                      <Plus className="w-4 h-4 mr-2" /> Nova Tag
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
-                      <DialogTitle>Create New Kanban Tag</DialogTitle>
+                      <DialogTitle>Criar Nova Tag Kanban</DialogTitle>
                       <DialogDescription>
-                        Add a new stage to your sales funnel.
+                        Adicione um novo estágio ao seu funil de vendas.
                       </DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
                       <div className="grid gap-2">
-                        <Label htmlFor="status-label">Tag Name (Ex: Quotation Sent)</Label>
+                        <Label htmlFor="status-label">Nome da Tag (Ex: Orçamento Enviado)</Label>
                         <Input 
                           id="status-label" 
-                          placeholder="Enter name..." 
+                          placeholder="Digite o nome..." 
                           value={newStatusData.label}
                           onChange={(e) => setNewStatusData({...newStatusData, label: e.target.value})}
                         />
