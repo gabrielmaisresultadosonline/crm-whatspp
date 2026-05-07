@@ -306,11 +306,10 @@ const CRM = () => {
         if (settingsData) {
           setMetaSettings(settingsData);
           
-          // Se acabamos de fazer login, forçamos a escolha da conexão
-          // A não ser que já tenhamos uma conexão ativa e conectada
-          const isFreshLogin = !sessionStorage.getItem('connection_choice_made');
+          // Forçamos a exibição da escolha de conexão se for o primeiro acesso da sessão
+          const isFreshSession = !sessionStorage.getItem('connection_choice_made');
           
-          if (isFreshLogin) {
+          if (isFreshSession) {
             setShowConnectionChoice(true);
           } else if (settingsData.connection_type === 'meta') {
             setShowConnectionChoice(false);
@@ -322,6 +321,7 @@ const CRM = () => {
         } else {
           setShowConnectionChoice(true);
         }
+
 
 
 
@@ -1499,7 +1499,7 @@ const CRM = () => {
                 size="sm" 
                 onClick={() => {
                   sessionStorage.removeItem('connection_choice_made');
-                  setShowConnectionChoice(true);
+                  window.location.reload(); // Força recarregamento real
                 }}
                 className="flex items-center gap-2 rounded-xl bg-primary/5 hover:bg-primary/10 border-primary/20 text-primary font-bold transition-all hover:scale-105"
               >
@@ -1507,6 +1507,7 @@ const CRM = () => {
                 Trocar WhatsApp
               </Button>
             </div>
+
 
             
             {activeTab === 'contacts' && (
