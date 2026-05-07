@@ -3534,21 +3534,26 @@ const CRM = () => {
                                   variant="destructive" 
                                   className="flex-1 text-xs"
                                   onClick={async () => {
-                                    if(!confirm('Logout from WhatsApp Web?')) return;
+                                    if(!confirm('Deseja sair do WhatsApp Web?')) return;
                                     setSaving(true);
                                     try {
+                                      const sessionData = localStorage.getItem('mro_admin_session');
                                       const { data, error } = await supabase.functions.invoke('wpp-bot-admin', {
-                                        body: { action: 'logout' }
+                                        body: { 
+                                          action: 'logout',
+                                          adminToken: sessionData
+                                        }
                                       });
                                       if (error) throw error;
-                                      toast({ title: "Logged out" });
+                                      toast({ title: "Sessão finalizada" });
                                       fetchData();
                                     } catch (err: any) {
-                                      toast({ title: "Error", description: err.message, variant: "destructive" });
+                                      toast({ title: "Erro", description: err.message, variant: "destructive" });
                                     } finally {
                                       setSaving(false);
                                     }
                                   }}
+
                                 >
                                   Logout
                                 </Button>
