@@ -25,12 +25,12 @@ const CRMLogin = () => {
 
     if (result.success) {
       toast({
-        title: "Login realizado!",
-        description: "Bem-vindo ao CRM Meta",
+        title: "Login successful!",
+        description: "Welcome to Meta CRM",
       });
-      navigate('/crm');
+      navigate('/');
     } else {
-      setError(result.error || 'Credenciais inválidas');
+      setError(result.error || 'Invalid credentials');
     }
 
     setIsLoading(false);
