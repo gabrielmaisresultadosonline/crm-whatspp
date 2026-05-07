@@ -2,21 +2,8 @@
 
 echo "🚀 Iniciando reconstrução total do ecossistema..."
 
-# 1. Limpeza de Cache e Dependências
-echo "🧹 Limpando caches locais..."
-rm -rf node_modules .next .vite dist
-npm cache clean --force
-
-# 2. Reinstalação Limpa
-echo "📦 Instalando dependências..."
-npm install
-
-# 3. Forçar Build de Produção (Garante que o código novo seja compilado)
-echo "🏗️  Compilando nova estrutura..."
-npm run build
-
-# 4. Configuração do Servidor WhatsApp (wpp-server.cjs)
-echo "📱 Configurando Servidor WhatsApp..."
+# 1. Configuração do Servidor WhatsApp (wpp-server.cjs)
+echo "📱 Configurando Servidor WhatsApp com Sincronização..."
 cat <<'WPP' > wpp-server.cjs
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcodeTerminal = require('qrcode-terminal');
@@ -30,15 +17,15 @@ const client = new Client({
     authStrategy: new LocalAuth({ clientId: "renda_extra" }),
     puppeteer: {
         headless: true,
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
+        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-extensions']
     }
 });
 
 async function updateSession(data) {
     try {
-        await fetch(`${SUPABASE_URL}/rest/v1/wpp_bot_session?id=eq.renda_extra`, {
+        await fetch(\`\${SUPABASE_URL}/rest/v1/wpp_bot_session?id=eq.renda_extra\`, {
             method: 'PATCH',
-            headers: { 'Content-Type': 'application/json', 'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}` },
+            headers: { 'Content-Type': 'application/json', 'apikey': ANON_KEY, 'Authorization': \`Bearer \${ANON_KEY}\` },
             body: JSON.stringify(data)
         });
     } catch (e) {}
@@ -50,12 +37,12 @@ async function syncToCRM(msg) {
         const contact = await msg.getContact();
         const waId = msg.from.includes('@g.us') ? msg.from : (msg.fromMe ? msg.to : msg.from);
         
-        await fetch(`${SUPABASE_URL}/rest/v1/crm_contacts`, {
+        await fetch(\`\${SUPABASE_URL}/rest/v1/crm_contacts\`, {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json', 
                 'apikey': ANON_KEY, 
-                'Authorization': `Bearer ${ANON_KEY}`,
+                'Authorization': \`Bearer \${ANON_KEY}\`,
                 'Prefer': 'resolution=merge-duplicates'
             },
             body: JSON.stringify({
@@ -66,24 +53,25 @@ async function syncToCRM(msg) {
             })
         });
 
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/crm_contacts?wa_id=eq.${waId}`, {
-            headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}` }
+        const res = await fetch(\`\${SUPABASE_URL}/rest/v1/crm_contacts?wa_id=eq.\${waId}\`, {
+            headers: { 'apikey': ANON_KEY, 'Authorization': \`Bearer \${ANON_KEY}\` }
         });
         const contacts = await res.json();
         if (!contacts.length) return;
 
-        await fetch(`${SUPABASE_URL}/rest/v1/crm_messages`, {
+        await fetch(\`\${SUPABASE_URL}/rest/v1/crm_messages\`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}` },
+            headers: { 'Content-Type': 'application/json', 'apikey': ANON_KEY, 'Authorization': \`Bearer \${ANON_KEY}\` },
             body: JSON.stringify({
                 contact_id: contacts[0].id,
-                content: msg.body,
+                content: msg.body || '[Mídia]',
                 direction: msg.fromMe ? 'outgoing' : 'incoming',
                 type: 'text',
                 status: 'delivered',
                 created_at: new Date(msg.timestamp * 1000).toISOString()
             })
         });
+        console.log(\`[DEBUG] Sincronizando: \${chat.name || waId}\`);
     } catch (e) {}
 }
 
@@ -94,12 +82,14 @@ client.on('qr', async (qr) => {
 });
 
 client.on('ready', async () => {
+    console.log('✅ WhatsApp Conectado! Iniciando Sincronização...');
     updateSession({ status: 'connected', qr_code: null });
     const chats = await client.getChats();
-    for (const chat of chats.slice(0, 50)) {
-        const messages = await chat.fetchMessages({ limit: 50 });
+    for (const chat of chats.slice(0, 40)) {
+        const messages = await chat.fetchMessages({ limit: 30 });
         for (const m of messages) { await syncToCRM(m); }
     }
+    console.log('🏁 Sincronização de histórico concluída!');
 });
 
 client.on('message', syncToCRM);
@@ -108,15 +98,15 @@ client.initialize();
 
 setInterval(async () => {
     try {
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/wpp_bot_messages?status=eq.pending`, {
-            headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}` }
+        const res = await fetch(\`\${SUPABASE_URL}/rest/v1/wpp_bot_messages?status=eq.pending\`, {
+            headers: { 'apikey': ANON_KEY, 'Authorization': \`Bearer \${ANON_KEY}\` }
         });
         const msgs = await res.json();
         for (const m of msgs) {
-            await client.sendMessage(`${m.phone}@c.us`, m.message);
-            await fetch(`${SUPABASE_URL}/rest/v1/wpp_bot_messages?id=eq.${m.id}`, {
+            await client.sendMessage(\`\${m.phone}@c.us\`, m.message);
+            await fetch(\`\${SUPABASE_URL}/rest/v1/wpp_bot_messages?id=eq.\${m.id}\`, {
                 method: 'PATCH',
-                headers: { 'Content-Type': 'application/json', 'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}` },
+                headers: { 'Content-Type': 'application/json', 'apikey': ANON_KEY, 'Authorization': \`Bearer \${ANON_KEY}\` },
                 body: JSON.stringify({ status: 'sent', sent_at: new Date() })
             });
         }
@@ -124,11 +114,11 @@ setInterval(async () => {
 }, 5000);
 WPP
 
-# 5. Reiniciar Processos
+# 2. Reiniciar Processos
 echo "🔄 Reiniciando PM2..."
-pm2 delete all
+pm2 delete wpp-bot || true
 pm2 start wpp-server.cjs --name wpp-bot
 pm2 save
 
-echo "✅ RECONSTRUÇÃO COMPLETA! O histórico está sendo sincronizado."
-echo "💡 DICA: Limpe o cache do seu navegador (Ctrl+F5) para garantir que a interface nova carregue."
+echo "✅ RECONSTRUÇÃO COMPLETA!"
+echo "💡 DICA: Limpe o cache do seu navegador (Ctrl+F5) no site."
