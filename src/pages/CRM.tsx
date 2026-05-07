@@ -3480,14 +3480,22 @@ const CRM = () => {
                                       onClick={async () => {
                                         setSaving(true);
                                         try {
-                                          await supabase.functions.invoke('wpp-bot-admin', { body: { action: 'requestQr' } });
+                                          const sessionData = localStorage.getItem('mro_admin_session');
+                                          const { data, error } = await supabase.functions.invoke('wpp-bot-admin', { 
+                                            body: { 
+                                              action: 'requestQr',
+                                              adminToken: sessionData
+                                            } 
+                                          });
+                                          if (error) throw error;
                                           toast({ title: "Solicitação enviada", description: "O QR Code será gerado em instantes." });
-                                        } catch (e) {
-                                          toast({ title: "Erro", variant: "destructive" });
+                                        } catch (e: any) {
+                                          toast({ title: "Erro", description: e.message, variant: "destructive" });
                                         } finally {
                                           setSaving(false);
                                         }
                                       }}
+
                                     >
                                       Gerar QR Code Agora
                                     </Button>
