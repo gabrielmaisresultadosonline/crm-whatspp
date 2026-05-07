@@ -79,7 +79,7 @@ const CRMLogin = () => {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Digite sua senha"
+              placeholder="Enter your password"
               className="bg-secondary/50"
               required
             />
@@ -87,17 +87,16 @@ const CRMLogin = () => {
 
           <Button
             type="submit"
-            variant="gradient"
             size="lg"
-            className="w-full cursor-pointer"
+            className="w-full cursor-pointer bg-gradient-to-r from-primary to-blue-600 hover:opacity-90"
             disabled={isLoading}
           >
-            {isLoading ? 'Verificando...' : 'Entrar no CRM'}
+            {isLoading ? 'Verifying...' : 'Enter CRM'}
           </Button>
         </form>
 
         <p className="text-xs text-muted-foreground text-center mt-6">
-          Acesso restrito apenas para administradores autorizados
+          Restricted access for authorized administrators only
         </p>
       </div>
     </div>
