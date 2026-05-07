@@ -192,6 +192,7 @@ const CRM = () => {
   const [scheduledMessages, setScheduledMessages] = useState<any[]>([]);
   const [allScheduledMessages, setAllScheduledMessages] = useState<any[]>([]);
   const [showAllContacts, setShowAllContacts] = useState(false);
+  const [showConnectionChoice, setShowConnectionChoice] = useState(true);
 
   // States for custom statuses
   const [kanbanStatuses, setKanbanStatuses] = useState<any[]>([]);
