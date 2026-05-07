@@ -283,7 +283,7 @@ const CRM = () => {
   useEffect(() => {
     let filtered = contacts;
     
-    // In the "Conversations" tab, show everyone, prioritizing those with interaction
+    // No Conversas, mostramos todos os contatos sem ocultar ninguém
     if (activeTab === 'contacts') {
       filtered = [...filtered].sort((a, b) => {
         if (a.last_interaction && !b.last_interaction) return -1;
@@ -1736,7 +1736,7 @@ const CRM = () => {
                             {status.label}
                           </div>
                           <div className="flex items-center gap-2">
-                            <Badge variant="secondary" className="bg-background/80 shadow-sm border font-black">{contacts.filter(c => c.status === status.value && c.last_interaction !== null).length}</Badge>
+                            <Badge variant="secondary" className="bg-background/80 shadow-sm border font-black">{contacts.filter(c => c.status === status.value).length}</Badge>
                             {kanbanStatuses.some(s => s.id && s.value === status.value) && (
                               <div className="flex items-center gap-1 opacity-0 group-hover/column:opacity-100 transition-opacity">
                                 <button 
@@ -1767,7 +1767,7 @@ const CRM = () => {
                           </div>
                         </div>
                         <ScrollArea className="flex-1 p-3">
-                          {contacts.filter(c => c.status === status.value && c.last_interaction !== null).map(contact => (
+                          {contacts.filter(c => c.status === status.value).map(contact => (
                             <Card 
                               key={contact.id} 
                               draggable 
@@ -1791,7 +1791,7 @@ const CRM = () => {
                               </div>
                             </Card>
                           ))}
-                          {contacts.filter(c => c.status === status.value && c.last_interaction !== null).length === 0 && (
+                          {contacts.filter(c => c.status === status.value).length === 0 && (
                             <div className="h-20 flex items-center justify-center border-2 border-dashed border-muted rounded-xl opacity-40">
                               <p className="text-[10px] font-bold uppercase tracking-widest">Empty</p>
                             </div>
