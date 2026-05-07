@@ -1414,11 +1414,11 @@ const CRM = () => {
                     { id: 'broadcast', label: 'Transmissão', icon: Zap },
                     { id: 'scheduling', label: 'Agendamentos', icon: Calendar },
                     { id: 'flows', label: 'Fluxos', icon: GitBranch },
-                    { id: 'templates', label: 'Modelos', icon: FileText },
+                    { id: 'templates', label: 'Modelos', icon: FileText, hidden: metaSettings.connection_type === 'wpp-web' },
                     { id: 'ai-agent', label: 'Agente I.A.', icon: Bot },
                     { id: 'webhooks', label: 'Webhooks (API)', icon: Webhook },
                     { id: 'settings', label: 'Configurações', icon: Settings },
-                  ].map((item) => (
+                  ].filter(item => !item.hidden).map((item) => (
                     <SidebarMenuItem key={item.id}>
                       <SidebarMenuButton 
                         isActive={activeTab === item.id} 
@@ -1433,6 +1433,7 @@ const CRM = () => {
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   ))}
+
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
