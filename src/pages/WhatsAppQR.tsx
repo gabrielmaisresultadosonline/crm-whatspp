@@ -64,6 +64,8 @@ const WhatsAppQR = () => {
   const [contacts, setContacts] = useState<any[]>([]);
   const [chatMessages, setChatMessages] = useState<any[]>([]);
   const [selectedContact, setSelectedContact] = useState<any>(null);
+  const selectedContactRef = useRef<any>(null);
+
   const [newMessage, setNewMessage] = useState('');
   const [flows, setFlows] = useState<any[]>([]);
   const [isFlowEditorOpen, setIsFlowEditorOpen] = useState(false);
