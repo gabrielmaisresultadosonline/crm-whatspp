@@ -3507,21 +3507,26 @@ const CRM = () => {
                                 <Button 
                                   variant="outline" 
                                   className="flex-1 text-xs" 
-                                  onClick={async () => {
-                                    setSaving(true);
-                                    try {
-                                      const { data, error } = await supabase.functions.invoke('wpp-bot-admin', {
-                                        body: { action: 'restart' }
-                                      });
-                                      if (error) throw error;
-                                      toast({ title: "Session restarted" });
-                                      fetchData();
-                                    } catch (err: any) {
-                                      toast({ title: "Error", description: err.message, variant: "destructive" });
-                                    } finally {
-                                      setSaving(false);
-                                    }
-                                  }}
+                                    onClick={async () => {
+                                      setSaving(true);
+                                      try {
+                                        const sessionData = localStorage.getItem('mro_admin_session');
+                                        const { data, error } = await supabase.functions.invoke('wpp-bot-admin', {
+                                          body: { 
+                                            action: 'restart',
+                                            adminToken: sessionData
+                                          }
+                                        });
+                                        if (error) throw error;
+                                        toast({ title: "Sessão reiniciada" });
+                                        fetchData();
+                                      } catch (err: any) {
+                                        toast({ title: "Erro", description: err.message, variant: "destructive" });
+                                      } finally {
+                                        setSaving(false);
+                                      }
+                                    }}
+
                                 >
                                   Restart Session
                                 </Button>
