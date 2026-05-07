@@ -305,10 +305,15 @@ const CRM = () => {
       const { data: settingsData } = await supabase.from('crm_settings').select('*').maybeSingle();
       if (settingsData) {
         setMetaSettings(settingsData);
-        if (settingsData.connection_type) {
+        // Não fechamos a tela de escolha automaticamente se o usuário estiver na aba de configuração
+        // ou se ele ainda não estiver conectado (para o caso do QR Code)
+        if (settingsData.connection_type && settingsData.connection_type === 'meta') {
+          setShowConnectionChoice(false);
+        } else if (settingsData.connection_type === 'wpp-web' && settingsData.wpp_web_status === 'connected') {
           setShowConnectionChoice(false);
         }
       }
+
 
       const { data: metricsData } = await supabase
         .from('crm_metrics')
