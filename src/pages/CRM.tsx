@@ -1390,51 +1390,6 @@ const CRM = () => {
                   <Button className="w-full h-14 rounded-2xl font-bold text-lg bg-green-600 hover:bg-green-500 shadow-lg shadow-green-500/20 pointer-events-none">Conectar via QR Code</Button>
                 </div>
               </Card>
-            </div>
-          </div>
-        )}
-
-                  <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-6 text-primary group-hover:scale-110 transition-transform">
-                    <Webhook className="w-8 h-8" />
-                  </div>
-                  <CardTitle className="text-2xl font-bold mb-2">API Oficial (Meta)</CardTitle>
-                  <CardDescription className="text-base leading-relaxed">
-                    Conexão profissional e estável via Facebook Developers. Ideal para altos volumes e chatbots oficiais.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="p-8 pt-0">
-                  <Button className="w-full h-12 text-lg font-bold rounded-xl bg-primary">
-                    Usar API Meta <ArrowRight className="ml-2 w-5 h-5" />
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card 
-                className="relative overflow-hidden group cursor-pointer hover:shadow-2xl transition-all border-2 hover:border-green-500/50 bg-card/50"
-                onClick={() => {
-                  setMetaSettings({...metaSettings, connection_type: 'wpp_web'});
-                  handleSaveSettings({...metaSettings, connection_type: 'wpp_web'});
-                  setShowConnectionChoice(false);
-                }}
-              >
-                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                  <MessageSquare className="w-24 h-24" />
-                </div>
-                <CardHeader className="p-8">
-                  <div className="w-16 h-16 rounded-2xl bg-green-500/10 flex items-center justify-center mb-6 text-green-500 group-hover:scale-110 transition-transform">
-                    <MessageSquare className="w-8 h-8" />
-                  </div>
-                  <CardTitle className="text-2xl font-bold mb-2">QR CODE (WhatsApp Web)</CardTitle>
-                  <CardDescription className="text-base leading-relaxed">
-                    Conecte instantaneamente escaneando o código. Suporte a conversas, fotos, botões e fluxos automáticos.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="p-8 pt-0">
-                  <Button className="w-full h-12 text-lg font-bold rounded-xl bg-green-600 hover:bg-green-700 border-none">
-                    Usar QR CODE <ArrowRight className="ml-2 w-5 h-5" />
-                  </Button>
-                </CardContent>
-              </Card>
 
               <div className="md:col-span-2 text-center mt-8">
                 <p className="text-xs text-muted-foreground">Você poderá alterar o tipo de conexão a qualquer momento nas configurações.</p>
@@ -1442,6 +1397,7 @@ const CRM = () => {
             </div>
           </div>
         )}
+
         <Sidebar className="border-r shadow-sm">
           <SidebarHeader className="p-4 border-b flex items-center justify-center">
             <Logo size="sm" />
