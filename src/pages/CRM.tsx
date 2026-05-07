@@ -1374,28 +1374,28 @@ const CRM = () => {
                 <Dialog open={isNewStatusDialogOpen} onOpenChange={setIsNewStatusDialogOpen}>
                   <DialogTrigger asChild>
                     <Button variant="outline" size="sm" className="bg-primary/5 hover:bg-primary/10 border-primary/20">
-                      <Plus className="w-4 h-4 mr-2" /> Nova Etiqueta
+                      <Plus className="w-4 h-4 mr-2" /> New Tag
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
-                      <DialogTitle>Criar Nova Etiqueta Kanban</DialogTitle>
+                      <DialogTitle>Create New Kanban Tag</DialogTitle>
                       <DialogDescription>
-                        Adicione uma nova etapa ao seu funil de vendas.
+                        Add a new stage to your sales funnel.
                       </DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
                       <div className="grid gap-2">
-                        <Label htmlFor="status-label">Nome da Etiqueta (Ex: Orçamento Enviado)</Label>
+                        <Label htmlFor="status-label">Tag Name (Ex: Quotation Sent)</Label>
                         <Input 
                           id="status-label" 
-                          placeholder="Digite o nome..." 
+                          placeholder="Enter name..." 
                           value={newStatusData.label}
                           onChange={(e) => setNewStatusData({...newStatusData, label: e.target.value})}
                         />
                       </div>
                       <div className="grid gap-2">
-                        <Label>Cor da Etiqueta</Label>
+                        <Label>Tag Color</Label>
                         <div className="flex flex-wrap gap-2">
                           {['blue', 'yellow', 'purple', 'green', 'red', 'orange', 'indigo', 'pink'].map(color => (
                             <button
@@ -1422,7 +1422,7 @@ const CRM = () => {
                     <DialogFooter>
                       <Button onClick={handleCreateStatus} disabled={saving}>
                         {saving ? <RefreshCcw className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
-                        Salvar Etiqueta
+                        Save Tag
                       </Button>
                     </DialogFooter>
                   </DialogContent>
@@ -1431,15 +1431,15 @@ const CRM = () => {
                 <Dialog open={isEditStatusDialogOpen} onOpenChange={setIsEditStatusDialogOpen}>
                   <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
-                      <DialogTitle>Editar Etiqueta Kanban</DialogTitle>
+                      <DialogTitle>Edit Kanban Tag</DialogTitle>
                       <DialogDescription>
-                        Altere as informações da etapa do seu funil.
+                        Change the information of your funnel stage.
                       </DialogDescription>
                     </DialogHeader>
                     {editingStatus && (
                       <div className="grid gap-4 py-4">
                         <div className="grid gap-2">
-                          <Label htmlFor="edit-status-label">Nome da Etiqueta</Label>
+                          <Label htmlFor="edit-status-label">Tag Name</Label>
                           <Input 
                             id="edit-status-label" 
                             value={editingStatus.label}
@@ -1447,7 +1447,7 @@ const CRM = () => {
                           />
                         </div>
                         <div className="grid gap-2">
-                          <Label>Cor da Etiqueta</Label>
+                          <Label>Tag Color</Label>
                           <div className="flex flex-wrap gap-2">
                             {['blue', 'yellow', 'purple', 'green', 'red', 'orange', 'indigo', 'pink'].map(color => (
                               <button
@@ -1475,17 +1475,17 @@ const CRM = () => {
                     <DialogFooter>
                       <Button onClick={handleUpdateStatus} disabled={saving}>
                         {saving ? <RefreshCcw className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
-                        Salvar Alterações
+                        Save Changes
                       </Button>
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>
                 <Button variant="outline" size="sm" onClick={() => setIsImportExportOpen(true)}>
-                  <FileUp className="w-4 h-4 mr-2" /> Importar/Exportar
+                  <FileUp className="w-4 h-4 mr-2" /> Import/Export
                 </Button>
                 <Button variant="outline" size="sm" onClick={() => setKanbanView(!kanbanView)}>
                   {kanbanView ? <MessageSquare className="w-4 h-4 mr-2" /> : <BarChart3 className="w-4 h-4 mr-2" />}
-                  {kanbanView ? 'Lista' : 'Kanban'}
+                  {kanbanView ? 'List' : 'Kanban'}
                 </Button>
               </div>
             )}
