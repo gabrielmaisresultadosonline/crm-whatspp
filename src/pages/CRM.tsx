@@ -341,10 +341,11 @@ const CRM = () => {
     }
   };
 
-  const handleSaveSettings = async () => {
+  const handleSaveSettings = async (customSettings?: any) => {
     setSaving(true);
     try {
-      const { id, created_at, updated_at, webhook_verify_token, ...rest } = metaSettings;
+      const settingsToSave = customSettings || metaSettings;
+      const { id, created_at, updated_at, webhook_verify_token, ...rest } = settingsToSave;
       const { error } = await supabase.from('crm_settings').upsert({
         ...rest,
         id: '00000000-0000-0000-0000-000000000001',
@@ -352,7 +353,7 @@ const CRM = () => {
         updated_at: new Date().toISOString()
       }, { onConflict: 'id' });
       if (error) throw error;
-      toast({ title: "Settings saved!" });
+      toast({ title: "Configurações salvas!" });
       fetchData();
     } catch (error) {
       toast({ title: "Erro ao salvar", variant: "destructive" });
