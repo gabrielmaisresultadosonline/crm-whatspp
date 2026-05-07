@@ -1497,14 +1497,14 @@ const CRM = () => {
                 <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                   <div>
                     <h2 className="text-3xl font-bold tracking-tight">Métricas Gerais</h2>
-                    <p className="text-muted-foreground">Visão geral do desempenho da sua operação.</p>
+                    <p className="text-muted-foreground">Overview of your operation performance.</p>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     {[
-                      { label: 'Mensagens Enviadas', value: metrics.sent_count, icon: Send, color: 'blue' },
-                      { label: 'Respondidas', value: metrics.responded_count, icon: MessageSquare, color: 'yellow' },
-                      { label: 'Contatos Qualificados', value: metrics.qualified_count, icon: CheckCircle2, color: 'purple' },
-                      { label: 'Vendas Fechadas', value: metrics.sales_count, icon: DollarSign, color: 'green' },
+                      { label: 'Sent Messages', value: metrics.sent_count, icon: Send, color: 'blue' },
+                      { label: 'Responded', value: metrics.responded_count, icon: MessageSquare, color: 'yellow' },
+                      { label: 'Qualified Contacts', value: metrics.qualified_count, icon: CheckCircle2, color: 'purple' },
+                      { label: 'Closed Sales', value: metrics.sales_count, icon: DollarSign, color: 'green' },
                     ].map((stat, i) => (
                       <Card key={i} className="relative overflow-hidden group hover:shadow-lg transition-all border-zinc-100 dark:border-zinc-800">
                         <CardHeader className="flex flex-row items-center justify-between pb-2">
