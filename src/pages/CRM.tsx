@@ -305,18 +305,27 @@ const CRM = () => {
         const { data: settingsData } = await supabase.from('crm_settings').select('*').maybeSingle();
         if (settingsData) {
           setMetaSettings(settingsData);
-          // Only auto-hide connection choice if using Meta OR if Wpp-Web is already connected
-          if (settingsData.connection_type === 'meta') {
-            setShowConnectionChoice(false);
-          } else if (settingsData.connection_type === 'wpp-web' && settingsData.wpp_web_status === 'connected') {
-            setShowConnectionChoice(false);
-          } else {
-            // Force choice screen if not properly connected via QR code
+          
+          // Se não houver tipo de conexão definido, sempre mostra a escolha
+          if (!settingsData.connection_type) {
             setShowConnectionChoice(true);
+          } 
+          // Se for Meta, entra direto
+          else if (settingsData.connection_type === 'meta') {
+            setShowConnectionChoice(false);
+          } 
+          // Se for Wpp-Web, só entra se estiver de fato conectado
+          else if (settingsData.connection_type === 'wpp-web') {
+            if (settingsData.wpp_web_status === 'connected') {
+              setShowConnectionChoice(false);
+            } else {
+              setShowConnectionChoice(true);
+            }
           }
         } else {
           setShowConnectionChoice(true);
         }
+
 
 
 
