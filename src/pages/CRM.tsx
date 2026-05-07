@@ -192,6 +192,7 @@ const CRM = () => {
   const [scheduledMessages, setScheduledMessages] = useState<any[]>([]);
   const [allScheduledMessages, setAllScheduledMessages] = useState<any[]>([]);
   const [showAllContacts, setShowAllContacts] = useState(false);
+  const [showConnectionChoice, setShowConnectionChoice] = useState(true);
 
   // States for custom statuses
   const [kanbanStatuses, setKanbanStatuses] = useState<any[]>([]);
@@ -302,7 +303,12 @@ const CRM = () => {
     setLoading(true);
     try {
       const { data: settingsData } = await supabase.from('crm_settings').select('*').maybeSingle();
-      if (settingsData) setMetaSettings(settingsData);
+      if (settingsData) {
+        setMetaSettings(settingsData);
+        if (settingsData.connection_type) {
+          setShowConnectionChoice(false);
+        }
+      }
 
       const { data: metricsData } = await supabase
         .from('crm_metrics')
@@ -335,10 +341,11 @@ const CRM = () => {
     }
   };
 
-  const handleSaveSettings = async () => {
+  const handleSaveSettings = async (customSettings?: any) => {
     setSaving(true);
     try {
-      const { id, created_at, updated_at, webhook_verify_token, ...rest } = metaSettings;
+      const settingsToSave = customSettings || metaSettings;
+      const { id, created_at, updated_at, webhook_verify_token, ...rest } = settingsToSave;
       const { error } = await supabase.from('crm_settings').upsert({
         ...rest,
         id: '00000000-0000-0000-0000-000000000001',
@@ -346,7 +353,7 @@ const CRM = () => {
         updated_at: new Date().toISOString()
       }, { onConflict: 'id' });
       if (error) throw error;
-      toast({ title: "Settings saved!" });
+      toast({ title: "Configurações salvas!" });
       fetchData();
     } catch (error) {
       toast({ title: "Erro ao salvar", variant: "destructive" });
@@ -1319,27 +1326,96 @@ const CRM = () => {
 
   return (
     <SidebarProvider>
-      <div className="h-screen w-full flex overflow-hidden bg-background">
+      <div className="h-screen w-full flex overflow-hidden bg-background relative">
+        {showConnectionChoice && (
+          <div className="absolute inset-0 z-[100] bg-background/95 backdrop-blur-md flex items-center justify-center p-6 animate-in fade-in duration-500">
+            <div className="max-w-4xl w-full grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="md:col-span-2 text-center mb-8">
+                <Logo size="lg" className="mx-auto mb-6" />
+                <h1 className="text-4xl font-black tracking-tight mb-2">Bem-vindo ao CRM</h1>
+                <p className="text-muted-foreground text-lg">Escolha como deseja conectar seu WhatsApp para começar</p>
+              </div>
+
+              <Card 
+                className="relative overflow-hidden group cursor-pointer hover:shadow-2xl transition-all border-2 hover:border-primary/50 bg-card/50"
+                onClick={() => {
+                  setMetaSettings({...metaSettings, connection_type: 'meta'});
+                  handleSaveSettings({...metaSettings, connection_type: 'meta'});
+                  setShowConnectionChoice(false);
+                }}
+              >
+                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                  <Webhook className="w-24 h-24" />
+                </div>
+                <CardHeader className="p-8">
+                  <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-6 text-primary group-hover:scale-110 transition-transform">
+                    <Webhook className="w-8 h-8" />
+                  </div>
+                  <CardTitle className="text-2xl font-bold mb-2">API Oficial (Meta)</CardTitle>
+                  <CardDescription className="text-base leading-relaxed">
+                    Conexão profissional e estável via Facebook Developers. Ideal para altos volumes e chatbots oficiais.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="p-8 pt-0">
+                  <Button className="w-full h-12 text-lg font-bold rounded-xl bg-primary">
+                    Usar API Meta <ArrowRight className="ml-2 w-5 h-5" />
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card 
+                className="relative overflow-hidden group cursor-pointer hover:shadow-2xl transition-all border-2 hover:border-green-500/50 bg-card/50"
+                onClick={() => {
+                  setMetaSettings({...metaSettings, connection_type: 'wpp_web'});
+                  handleSaveSettings({...metaSettings, connection_type: 'wpp_web'});
+                  setShowConnectionChoice(false);
+                }}
+              >
+                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                  <MessageSquare className="w-24 h-24" />
+                </div>
+                <CardHeader className="p-8">
+                  <div className="w-16 h-16 rounded-2xl bg-green-500/10 flex items-center justify-center mb-6 text-green-500 group-hover:scale-110 transition-transform">
+                    <MessageSquare className="w-8 h-8" />
+                  </div>
+                  <CardTitle className="text-2xl font-bold mb-2">QR CODE (WhatsApp Web)</CardTitle>
+                  <CardDescription className="text-base leading-relaxed">
+                    Conecte instantaneamente escaneando o código. Suporte a conversas, fotos, botões e fluxos automáticos.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="p-8 pt-0">
+                  <Button className="w-full h-12 text-lg font-bold rounded-xl bg-green-600 hover:bg-green-700 border-none">
+                    Usar QR CODE <ArrowRight className="ml-2 w-5 h-5" />
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <div className="md:col-span-2 text-center mt-8">
+                <p className="text-xs text-muted-foreground">Você poderá alterar o tipo de conexão a qualquer momento nas configurações.</p>
+              </div>
+            </div>
+          </div>
+        )}
         <Sidebar className="border-r shadow-sm">
           <SidebarHeader className="p-4 border-b flex items-center justify-center">
             <Logo size="sm" />
           </SidebarHeader>
           <SidebarContent>
             <SidebarGroup>
-              <SidebarGroupLabel className="px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-bold">Navigation</SidebarGroupLabel>
+              <SidebarGroupLabel className="px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-bold">Navegação</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   {[
-                    { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
-                    { id: 'contacts', label: 'Conversations', icon: MessageSquare },
-                    { id: 'contact-list', label: 'Contacts', icon: Users },
-                    { id: 'broadcast', label: 'Broadcaster', icon: Zap },
-                    { id: 'scheduling', label: 'Scheduling', icon: Calendar },
-                    { id: 'flows', label: 'Flows', icon: GitBranch },
-                    { id: 'templates', label: 'Templates', icon: FileText },
-                    { id: 'ai-agent', label: 'AI Agent', icon: Bot },
+                    { id: 'dashboard', label: 'Painel', icon: BarChart3 },
+                    { id: 'contacts', label: 'Conversas', icon: MessageSquare },
+                    { id: 'contact-list', label: 'Contatos', icon: Users },
+                    { id: 'broadcast', label: 'Transmissão', icon: Zap },
+                    { id: 'scheduling', label: 'Agendamentos', icon: Calendar },
+                    { id: 'flows', label: 'Fluxos', icon: GitBranch },
+                    { id: 'templates', label: 'Modelos', icon: FileText },
+                    { id: 'ai-agent', label: 'Agente I.A.', icon: Bot },
                     { id: 'webhooks', label: 'Webhooks (API)', icon: Webhook },
-                    { id: 'settings', label: 'Settings', icon: Settings },
+                    { id: 'settings', label: 'Configurações', icon: Settings },
                   ].map((item) => (
                     <SidebarMenuItem key={item.id}>
                       <SidebarMenuButton 
@@ -1371,29 +1447,40 @@ const CRM = () => {
             <div className="flex items-center gap-4">
               <SidebarTrigger />
               <div className="h-4 w-px bg-border mx-2 hidden md:block" />
-              <h1 className="text-xl font-bold tracking-tight capitalize">{activeTab}</h1>
+              <h1 className="text-xl font-bold tracking-tight capitalize">
+                {activeTab === 'dashboard' ? 'Painel' : 
+                 activeTab === 'contacts' ? 'Conversas' : 
+                 activeTab === 'contact-list' ? 'Contatos' : 
+                 activeTab === 'broadcast' ? 'Transmissão' : 
+                 activeTab === 'scheduling' ? 'Agendamentos' : 
+                 activeTab === 'flows' ? 'Fluxos' : 
+                 activeTab === 'templates' ? 'Modelos' : 
+                 activeTab === 'ai-agent' ? 'Agente I.A.' : 
+                 activeTab === 'webhooks' ? 'Webhooks (API)' : 
+                 activeTab === 'settings' ? 'Configurações' : activeTab}
+              </h1>
             </div>
             {activeTab === 'contacts' && (
               <div className="flex gap-2">
                 <Dialog open={isNewStatusDialogOpen} onOpenChange={setIsNewStatusDialogOpen}>
                   <DialogTrigger asChild>
                     <Button variant="outline" size="sm" className="bg-primary/5 hover:bg-primary/10 border-primary/20">
-                      <Plus className="w-4 h-4 mr-2" /> New Tag
+                      <Plus className="w-4 h-4 mr-2" /> Nova Tag
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
-                      <DialogTitle>Create New Kanban Tag</DialogTitle>
+                      <DialogTitle>Criar Nova Tag Kanban</DialogTitle>
                       <DialogDescription>
-                        Add a new stage to your sales funnel.
+                        Adicione um novo estágio ao seu funil de vendas.
                       </DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
                       <div className="grid gap-2">
-                        <Label htmlFor="status-label">Tag Name (Ex: Quotation Sent)</Label>
+                        <Label htmlFor="status-label">Nome da Tag (Ex: Orçamento Enviado)</Label>
                         <Input 
                           id="status-label" 
-                          placeholder="Enter name..." 
+                          placeholder="Digite o nome..." 
                           value={newStatusData.label}
                           onChange={(e) => setNewStatusData({...newStatusData, label: e.target.value})}
                         />
