@@ -3424,22 +3424,41 @@ const CRM = () => {
                                     <div className="bg-white p-4 rounded-lg shadow-sm">
                                       <img src={metaSettings.wpp_web_qr_code} alt="WhatsApp QR Code" className="w-48 h-48" />
                                     </div>
-                                    <p className="text-xs font-medium animate-pulse text-primary">Scan the QR code to connect</p>
+                                    <p className="text-xs font-medium animate-pulse text-primary">Escaneie o QR Code para conectar</p>
                                   </>
                                 ) : metaSettings.wpp_web_status === 'connected' ? (
                                   <div className="flex flex-col items-center gap-2">
                                     <div className="w-16 h-16 rounded-full bg-green-500/10 flex items-center justify-center">
                                       <CheckCircle2 className="w-10 h-10 text-green-500" />
                                     </div>
-                                    <p className="text-sm font-bold text-green-600">Connected</p>
+                                    <p className="text-sm font-bold text-green-600">Conectado</p>
                                     <Badge variant="outline" className="text-[10px] uppercase">{metaSettings.wpp_web_session_id}</Badge>
                                   </div>
                                 ) : (
                                   <div className="flex flex-col items-center gap-3">
                                     <RefreshCcw className="w-8 h-8 text-muted-foreground animate-spin" />
-                                    <p className="text-xs text-muted-foreground">Initializing session...</p>
+                                    <p className="text-xs text-muted-foreground">Iniciando sessão ou aguardando QR Code...</p>
+                                    <Button 
+                                      size="sm" 
+                                      variant="outline" 
+                                      className="mt-2"
+                                      onClick={async () => {
+                                        setSaving(true);
+                                        try {
+                                          await supabase.functions.invoke('wpp-bot-admin', { body: { action: 'requestQr' } });
+                                          toast({ title: "Solicitação enviada", description: "O QR Code será gerado em instantes." });
+                                        } catch (e) {
+                                          toast({ title: "Erro", variant: "destructive" });
+                                        } finally {
+                                          setSaving(false);
+                                        }
+                                      }}
+                                    >
+                                      Gerar QR Code Agora
+                                    </Button>
                                   </div>
                                 )}
+
                               </div>
                               <div className="flex gap-2">
                                 <Button 
