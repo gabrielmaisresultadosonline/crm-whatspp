@@ -331,7 +331,28 @@ const CRM = () => {
 
 
 
+      // Se for WPP Web, vamos buscar o status e QR do banco de dados periodicamente
+      // sem passar pela Edge Function que dá erro 401
+      const syncWppStatus = async () => {
+        const { data: session } = await supabase.from('wpp_bot_session').select('*').eq('id', 'renda_extra').maybeSingle();
+        if (session) {
+          setMetaSettings((prev: any) => ({
+            ...prev,
+            wpp_web_status: session.status,
+            wpp_web_qr_code: session.qr_code,
+            wpp_web_session_id: session.phone_number
+          }));
+        }
+      };
+
+      if (metaSettings.connection_type === 'wpp-web') {
+        syncWppStatus();
+        const interval = setInterval(syncWppStatus, 5000);
+        return () => clearInterval(interval);
+      }
+
       const { data: metricsData } = await supabase
+
         .from('crm_metrics')
         .select('*')
         .eq('date', new Date().toISOString().split('T')[0])
