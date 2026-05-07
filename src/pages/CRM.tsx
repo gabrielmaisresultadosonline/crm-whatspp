@@ -301,30 +301,29 @@ const CRM = () => {
 
   const fetchData = async () => {
     setLoading(true);
-      try {
-        const { data: settingsData } = await supabase.from('crm_settings').select('*').maybeSingle();
-        if (settingsData) {
-          setMetaSettings(settingsData);
-          
-          // Se o usuário selecionou QR Code e ainda está desconectado, mostramos as configurações
-          const choiceMade = sessionStorage.getItem('connection_choice_made');
-          
-          if (!choiceMade) {
-            setShowConnectionChoice(true);
-          } else if (settingsData.connection_type === 'meta') {
-            setShowConnectionChoice(false);
-          } else if (settingsData.connection_type === 'wpp-web') {
-            if (settingsData.wpp_web_status === 'connected') {
-              setShowConnectionChoice(false);
-            } else {
-              // Se escolheu QR Code mas não está conectado, forçamos a aba de configurações
-              setShowConnectionChoice(false);
-              setActiveTab('settings');
-            }
-          }
-        } else {
+    try {
+      const { data: settingsData } = await supabase.from('crm_settings').select('*').maybeSingle();
+      if (settingsData) {
+        setMetaSettings(settingsData);
+        
+        const choiceMade = sessionStorage.getItem('connection_choice_made');
+        
+        if (!choiceMade) {
           setShowConnectionChoice(true);
+        } else if (settingsData.connection_type === 'meta') {
+          setShowConnectionChoice(false);
+        } else if (settingsData.connection_type === 'wpp-web') {
+          if (settingsData.wpp_web_status === 'connected') {
+            setShowConnectionChoice(false);
+          } else {
+            setShowConnectionChoice(false);
+            setActiveTab('settings');
+          }
         }
+      } else {
+        setShowConnectionChoice(true);
+      }
+
 
 
 
