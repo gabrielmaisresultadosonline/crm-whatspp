@@ -283,7 +283,7 @@ const CRM = () => {
   useEffect(() => {
     let filtered = contacts;
     
-    // In the "Conversations" tab, show everyone, prioritizing those with interaction
+    // No Conversas, mostramos todos os contatos sem ocultar ninguém
     if (activeTab === 'contacts') {
       filtered = [...filtered].sort((a, b) => {
         if (a.last_interaction && !b.last_interaction) return -1;
