@@ -1499,7 +1499,7 @@ const CRM = () => {
                 size="sm" 
                 onClick={() => {
                   sessionStorage.removeItem('connection_choice_made');
-                  setShowConnectionChoice(true);
+                  window.location.reload(); // Força recarregamento real
                 }}
                 className="flex items-center gap-2 rounded-xl bg-primary/5 hover:bg-primary/10 border-primary/20 text-primary font-bold transition-all hover:scale-105"
               >
@@ -1507,6 +1507,7 @@ const CRM = () => {
                 Trocar WhatsApp
               </Button>
             </div>
+
 
             
             {activeTab === 'contacts' && (
