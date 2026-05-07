@@ -1733,7 +1733,7 @@ const CRM = () => {
                           ))
                         ) : (
                           <div className="p-8 text-center text-muted-foreground text-sm italic">
-                            Nenhum contato encontrado
+                            No contact found
                           </div>
                         )}
                       </ScrollArea>
