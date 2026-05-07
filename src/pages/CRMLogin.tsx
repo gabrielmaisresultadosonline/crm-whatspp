@@ -24,11 +24,17 @@ const CRMLogin = () => {
     const result = await loginAdmin(email, password);
 
     if (result.success) {
+      // Salva o token da sessão para uso nas Edge Functions
+      const { error: sessionError } = await supabase.from('admin_sessions').insert([{
+        token: localStorage.getItem('mro_admin_session') || ''
+      }]);
+
       toast({
-        title: "Login successful!",
-        description: "Welcome to Meta CRM",
+        title: "Login realizado!",
+        description: "Bem-vindo ao Meta CRM",
       });
       navigate('/');
+
     } else {
       setError(result.error || 'Invalid credentials');
     }
