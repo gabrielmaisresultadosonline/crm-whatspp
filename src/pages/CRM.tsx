@@ -2667,12 +2667,12 @@ const CRM = () => {
                       <CardHeader className="bg-blue-50 dark:bg-blue-900/10 border-b flex flex-row items-center justify-between">
                         <div>
                           <CardTitle className="text-lg flex items-center gap-2 text-blue-700 dark:text-blue-400">
-                            <Clock className="w-4 h-4" /> Gestão de Horário Comercial
+                            <Clock className="w-4 h-4" /> Business Hours Management
                           </CardTitle>
-                          <CardDescription>Defina quando o agente deve avisar sobre ausência</CardDescription>
+                          <CardDescription>Define when the agent should notify about absence</CardDescription>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Label className="text-xs font-bold">Ativar Função</Label>
+                          <Label className="text-xs font-bold">Activate Function</Label>
                           <Switch 
                             checked={metaSettings.business_hours_enabled}
                             onCheckedChange={(val) => setMetaSettings({...metaSettings, business_hours_enabled: val})}
