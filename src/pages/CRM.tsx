@@ -1328,66 +1328,67 @@ const CRM = () => {
     <SidebarProvider>
       <div className="h-screen w-full flex overflow-hidden bg-background relative">
         {showConnectionChoice && (
-          <div className="absolute inset-0 z-[100] bg-background/95 backdrop-blur-md flex items-center justify-center p-6 animate-in fade-in duration-500">
-            <div className="max-w-4xl w-full grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="md:col-span-2 text-center mb-8">
+          <div className="absolute inset-0 z-[100] bg-background flex items-center justify-center p-6 animate-in fade-in duration-500">
+            <div className="max-w-4xl w-full grid grid-cols-1 md:grid-cols-2 gap-8 relative overflow-hidden">
+               {/* Animated Background Gradients */}
+              <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-[120px] animate-pulse" />
+              <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-green-500/10 rounded-full blur-[120px] animate-pulse delay-700" />
+
+              <div className="md:col-span-2 text-center mb-8 relative z-10">
                 <Logo size="lg" className="mx-auto mb-6" />
-                <h1 className="text-4xl font-black tracking-tight mb-2">Bem-vindo ao CRM</h1>
-                <p className="text-muted-foreground text-lg">Escolha como deseja conectar seu WhatsApp para começar</p>
+                <h1 className="text-4xl font-black tracking-tight mb-2">Selecione seu Conector</h1>
+                <p className="text-muted-foreground text-lg">Escolha como deseja se conectar ao WhatsApp para gerenciar suas vendas.</p>
               </div>
 
               <Card 
-                className="relative overflow-hidden group cursor-pointer hover:shadow-2xl transition-all border-2 hover:border-primary/50 bg-card/50"
+                className="relative overflow-hidden group cursor-pointer hover:shadow-2xl transition-all border-2 hover:border-primary/50 bg-card/50 rounded-[2rem] p-2 h-full flex flex-col"
                 onClick={() => {
                   setMetaSettings({...metaSettings, connection_type: 'meta'});
                   handleSaveSettings({...metaSettings, connection_type: 'meta'});
                   setShowConnectionChoice(false);
                 }}
               >
-                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                   <Webhook className="w-24 h-24" />
                 </div>
                 <CardHeader className="p-8">
-                  <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-6 text-primary group-hover:scale-110 transition-transform">
-                    <Webhook className="w-8 h-8" />
+                  <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform duration-500">
+                    <Zap className="w-8 h-8" />
                   </div>
-                  <CardTitle className="text-2xl font-bold mb-2">API Oficial (Meta)</CardTitle>
-                  <CardDescription className="text-base leading-relaxed">
-                    Conexão profissional e estável via Facebook Developers. Ideal para altos volumes e chatbots oficiais.
+                  <CardTitle className="text-2xl font-bold mb-2">API Cloud Oficial</CardTitle>
+                  <CardDescription className="text-sm leading-relaxed">
+                    Alta estabilidade, conexão direta com a Meta. Ideal para grandes volumes e automações complexas com Templates.
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="p-8 pt-0">
-                  <Button className="w-full h-12 text-lg font-bold rounded-xl bg-primary">
-                    Usar API Meta <ArrowRight className="ml-2 w-5 h-5" />
-                  </Button>
-                </CardContent>
+                <div className="p-8 pt-0 mt-auto">
+                  <Button className="w-full h-14 rounded-2xl font-bold text-lg shadow-lg shadow-primary/20 pointer-events-none">Usar API Meta</Button>
+                </div>
               </Card>
 
               <Card 
-                className="relative overflow-hidden group cursor-pointer hover:shadow-2xl transition-all border-2 hover:border-green-500/50 bg-card/50"
+                className="relative overflow-hidden group cursor-pointer hover:shadow-2xl transition-all border-2 hover:border-green-500/50 bg-card/50 rounded-[2rem] p-2 h-full flex flex-col"
                 onClick={() => {
-                  setMetaSettings({...metaSettings, connection_type: 'wpp_web'});
-                  handleSaveSettings({...metaSettings, connection_type: 'wpp_web'});
+                  setMetaSettings({...metaSettings, connection_type: 'wpp-web'});
+                  handleSaveSettings({...metaSettings, connection_type: 'wpp-web'});
                   setShowConnectionChoice(false);
+                  setActiveTab('settings'); // Abre nas configurações para conectar o QR Code
                 }}
               >
-                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                   <MessageSquare className="w-24 h-24" />
                 </div>
                 <CardHeader className="p-8">
-                  <div className="w-16 h-16 rounded-2xl bg-green-500/10 flex items-center justify-center mb-6 text-green-500 group-hover:scale-110 transition-transform">
+                  <div className="w-16 h-16 rounded-2xl bg-green-500/10 flex items-center justify-center text-green-500 mb-6 group-hover:scale-110 transition-transform duration-500">
                     <MessageSquare className="w-8 h-8" />
                   </div>
-                  <CardTitle className="text-2xl font-bold mb-2">QR CODE (WhatsApp Web)</CardTitle>
-                  <CardDescription className="text-base leading-relaxed">
-                    Conecte instantaneamente escaneando o código. Suporte a conversas, fotos, botões e fluxos automáticos.
+                  <CardTitle className="text-2xl font-bold mb-2">QR Code (WPP-WEB)</CardTitle>
+                  <CardDescription className="text-sm leading-relaxed">
+                    Conecte seu WhatsApp pessoal ou business escaneando o código. Veja fotos, conversas e gerencie tudo em tempo real.
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="p-8 pt-0">
-                  <Button className="w-full h-12 text-lg font-bold rounded-xl bg-green-600 hover:bg-green-700 border-none">
-                    Usar QR CODE <ArrowRight className="ml-2 w-5 h-5" />
-                  </Button>
-                </CardContent>
+                <div className="p-8 pt-0 mt-auto">
+                  <Button className="w-full h-14 rounded-2xl font-bold text-lg bg-green-600 hover:bg-green-500 shadow-lg shadow-green-500/20 pointer-events-none">Conectar via QR Code</Button>
+                </div>
               </Card>
 
               <div className="md:col-span-2 text-center mt-8">
@@ -1396,6 +1397,7 @@ const CRM = () => {
             </div>
           </div>
         )}
+
         <Sidebar className="border-r shadow-sm">
           <SidebarHeader className="p-4 border-b flex items-center justify-center">
             <Logo size="sm" />
@@ -1412,11 +1414,11 @@ const CRM = () => {
                     { id: 'broadcast', label: 'Transmissão', icon: Zap },
                     { id: 'scheduling', label: 'Agendamentos', icon: Calendar },
                     { id: 'flows', label: 'Fluxos', icon: GitBranch },
-                    { id: 'templates', label: 'Modelos', icon: FileText },
+                    { id: 'templates', label: 'Modelos', icon: FileText, hidden: metaSettings.connection_type === 'wpp-web' },
                     { id: 'ai-agent', label: 'Agente I.A.', icon: Bot },
                     { id: 'webhooks', label: 'Webhooks (API)', icon: Webhook },
                     { id: 'settings', label: 'Configurações', icon: Settings },
-                  ].map((item) => (
+                  ].filter(item => !item.hidden).map((item) => (
                     <SidebarMenuItem key={item.id}>
                       <SidebarMenuButton 
                         isActive={activeTab === item.id} 
@@ -1431,6 +1433,7 @@ const CRM = () => {
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   ))}
+
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
