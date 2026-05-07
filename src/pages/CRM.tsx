@@ -2685,7 +2685,7 @@ const CRM = () => {
                             <div className="grid grid-cols-2 gap-4">
                               <div className="space-y-1.5">
                                 <Label className="text-[10px] uppercase font-bold text-muted-foreground flex items-center gap-1">
-                                  <Clock className="w-3 h-3" /> Início
+                                  <Clock className="w-3 h-3" /> Start
                                 </Label>
                                 <Input 
                                   type="time" 
@@ -2696,7 +2696,7 @@ const CRM = () => {
                               </div>
                               <div className="space-y-1.5">
                                 <Label className="text-[10px] uppercase font-bold text-muted-foreground flex items-center gap-1">
-                                  <Clock className="w-3 h-3" /> Fim
+                                  <Clock className="w-3 h-3" /> End
                                 </Label>
                                 <Input 
                                   type="time" 
@@ -2707,7 +2707,7 @@ const CRM = () => {
                               </div>
                             </div>
                             <div className="space-y-1.5">
-                              <Label className="text-[10px] uppercase font-bold text-muted-foreground">Fuso Horário</Label>
+                              <Label className="text-[10px] uppercase font-bold text-muted-foreground">Time Zone</Label>
                               <Select 
                                 value={metaSettings.business_hours_tz} 
                                 onValueChange={(val) => setMetaSettings({...metaSettings, business_hours_tz: val})}
@@ -2717,7 +2717,7 @@ const CRM = () => {
                                 </SelectTrigger>
                                 <SelectContent>
                                   <SelectItem value="America/Sao_Paulo">Brasília (GMT-3)</SelectItem>
-                                  <SelectItem value="Europe/Lisbon">Lisboa (GMT+0)</SelectItem>
+                                  <SelectItem value="Europe/Lisbon">Lisbon (GMT+0)</SelectItem>
                                   <SelectItem value="UTC">UTC</SelectItem>
                                 </SelectContent>
                               </Select>
