@@ -25,12 +25,12 @@ const CRMLogin = () => {
 
     if (result.success) {
       toast({
-        title: "Login realizado!",
-        description: "Bem-vindo ao CRM Meta",
+        title: "Login successful!",
+        description: "Welcome to Meta CRM",
       });
-      navigate('/crm');
+      navigate('/');
     } else {
-      setError(result.error || 'Credenciais inválidas');
+      setError(result.error || 'Invalid credentials');
     }
 
     setIsLoading(false);
@@ -41,8 +41,8 @@ const CRMLogin = () => {
       <div className="glass-card glow-border p-8 max-w-md w-full animate-slide-up">
         <div className="flex flex-col items-center mb-8">
           <Logo size="md" />
-          <h1 className="text-2xl font-display font-bold mt-4">CRM Meta Access</h1>
-          <p className="text-muted-foreground text-sm">Gestão de Mensagens e Fluxos</p>
+          <h1 className="text-2xl font-display font-bold mt-4">Meta CRM Access</h1>
+          <p className="text-muted-foreground text-sm">Message and Flow Management</p>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-6">
@@ -63,7 +63,7 @@ const CRMLogin = () => {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Digite seu email"
+              placeholder="Enter your email"
               className="bg-secondary/50"
               required
             />
@@ -72,14 +72,14 @@ const CRMLogin = () => {
           <div className="space-y-2">
             <Label htmlFor="password" className="flex items-center gap-2">
               <Lock className="w-4 h-4" />
-              Senha
+              Password
             </Label>
             <Input
               id="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Digite sua senha"
+              placeholder="Enter your password"
               className="bg-secondary/50"
               required
             />
@@ -87,17 +87,16 @@ const CRMLogin = () => {
 
           <Button
             type="submit"
-            variant="gradient"
             size="lg"
-            className="w-full cursor-pointer"
+            className="w-full cursor-pointer bg-gradient-to-r from-primary to-blue-600 hover:opacity-90"
             disabled={isLoading}
           >
-            {isLoading ? 'Verificando...' : 'Entrar no CRM'}
+            {isLoading ? 'Verifying...' : 'Enter CRM'}
           </Button>
         </form>
 
         <p className="text-xs text-muted-foreground text-center mt-6">
-          Acesso restrito apenas para administradores autorizados
+          Restricted access for authorized administrators only
         </p>
       </div>
     </div>

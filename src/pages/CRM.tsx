@@ -110,8 +110,8 @@ const CRM = () => {
     ai_agent_enabled: false,
     ai_operation_mode: 'chat',
     auto_generate_strategy: false,
-    strategy_generation_prompt: 'Analise o histórico acima e gere 3 estratégias personalizadas para converter este cliente. Sugira também 2 perguntas que eliminem as principais dúvidas dele sob o cabeçalho "### Perguntas para Eliminar Dúvidas".',
-    ai_system_prompt: 'Você é um assistente de vendas profissional para a empresa Mais Resultados Online. Responda em Português do Brasil.',
+    strategy_generation_prompt: 'Analyze the history above and generate 3 personalized strategies to convert this customer. Also suggest 2 questions that eliminate their main doubts under the heading "### Questions to Eliminate Doubts".',
+    ai_system_prompt: 'You are a professional sales assistant for Meta Results. Respond in English.',
     ai_agent_trigger: 'all',
     ai_agent_trigger_keyword: '',
     initial_auto_response_enabled: true,
@@ -123,7 +123,7 @@ const CRM = () => {
     business_hours_start: '08:00',
     business_hours_end: '18:00',
     business_hours_tz: 'America/Sao_Paulo',
-    outside_hours_message: 'Nossos administradores não estão ativos no momento. Seguiremos com o atendimento automatizado e em breve retornaremos com um atendimento humano.'
+    outside_hours_message: 'Our administrators are not active at the moment. We will continue with automated service and will return with human assistance soon.'
   });
   const [metrics, setMetrics] = useState<any>({
     sent_count: 0,
@@ -338,11 +338,11 @@ const CRM = () => {
       const { error } = await supabase.from('crm_settings').upsert({
         ...rest,
         id: '00000000-0000-0000-0000-000000000001',
-        strategy_generation_prompt: 'Analise o histórico acima e gere 3 estratégias personalizadas para converter este cliente. Sugira também 2 perguntas que eliminem as principais dúvidas dele sob o cabeçalho "### Perguntas para Eliminar Dúvidas". As perguntas devem ser diretas para copiar e colar.',
+        strategy_generation_prompt: 'Analyze the history above and generate 3 personalized strategies to convert this customer. Also suggest 2 questions that eliminate their main doubts under the heading "### Questions to Eliminate Doubts". The questions should be direct for copying and pasting.',
         updated_at: new Date().toISOString()
       }, { onConflict: 'id' });
       if (error) throw error;
-      toast({ title: "Configurações salvas!" });
+      toast({ title: "Settings saved!" });
       fetchData();
     } catch (error) {
       toast({ title: "Erro ao salvar", variant: "destructive" });
@@ -1322,20 +1322,20 @@ const CRM = () => {
           </SidebarHeader>
           <SidebarContent>
             <SidebarGroup>
-              <SidebarGroupLabel className="px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-bold">Navegação</SidebarGroupLabel>
+              <SidebarGroupLabel className="px-4 text-[10px] uppercase tracking-wider text-muted-foreground font-bold">Navigation</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   {[
                     { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
-                    { id: 'contacts', label: 'Conversas', icon: MessageSquare },
-                    { id: 'contact-list', label: 'Contatos', icon: Users },
-                    { id: 'broadcast', label: 'Disparador', icon: Zap },
-                    { id: 'scheduling', label: 'Agendamentos', icon: Calendar },
-                    { id: 'flows', label: 'Fluxos', icon: GitBranch },
+                    { id: 'contacts', label: 'Conversations', icon: MessageSquare },
+                    { id: 'contact-list', label: 'Contacts', icon: Users },
+                    { id: 'broadcast', label: 'Broadcaster', icon: Zap },
+                    { id: 'scheduling', label: 'Scheduling', icon: Calendar },
+                    { id: 'flows', label: 'Flows', icon: GitBranch },
                     { id: 'templates', label: 'Templates', icon: FileText },
-                    { id: 'ai-agent', label: 'Agente IA', icon: Bot },
+                    { id: 'ai-agent', label: 'AI Agent', icon: Bot },
                     { id: 'webhooks', label: 'Webhooks (API)', icon: Webhook },
-                    { id: 'settings', label: 'Ajustes', icon: Settings },
+                    { id: 'settings', label: 'Settings', icon: Settings },
                   ].map((item) => (
                     <SidebarMenuItem key={item.id}>
                       <SidebarMenuButton 
@@ -1356,8 +1356,8 @@ const CRM = () => {
             </SidebarGroup>
           </SidebarContent>
           <SidebarFooter className="border-t p-4">
-            <Button variant="ghost" className="w-full justify-start text-destructive hover:bg-destructive/10 hover:text-destructive" onClick={() => { logoutAdmin(); navigate('/crm/login'); }}>
-              <LogOut className="mr-2 h-4 w-4" /> Sair
+            <Button variant="ghost" className="w-full justify-start text-destructive hover:bg-destructive/10 hover:text-destructive" onClick={() => { logoutAdmin(); navigate('/login'); }}>
+              <LogOut className="mr-2 h-4 w-4" /> Logout
             </Button>
           </SidebarFooter>
         </Sidebar>
@@ -1374,28 +1374,28 @@ const CRM = () => {
                 <Dialog open={isNewStatusDialogOpen} onOpenChange={setIsNewStatusDialogOpen}>
                   <DialogTrigger asChild>
                     <Button variant="outline" size="sm" className="bg-primary/5 hover:bg-primary/10 border-primary/20">
-                      <Plus className="w-4 h-4 mr-2" /> Nova Etiqueta
+                      <Plus className="w-4 h-4 mr-2" /> New Tag
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
-                      <DialogTitle>Criar Nova Etiqueta Kanban</DialogTitle>
+                      <DialogTitle>Create New Kanban Tag</DialogTitle>
                       <DialogDescription>
-                        Adicione uma nova etapa ao seu funil de vendas.
+                        Add a new stage to your sales funnel.
                       </DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
                       <div className="grid gap-2">
-                        <Label htmlFor="status-label">Nome da Etiqueta (Ex: Orçamento Enviado)</Label>
+                        <Label htmlFor="status-label">Tag Name (Ex: Quotation Sent)</Label>
                         <Input 
                           id="status-label" 
-                          placeholder="Digite o nome..." 
+                          placeholder="Enter name..." 
                           value={newStatusData.label}
                           onChange={(e) => setNewStatusData({...newStatusData, label: e.target.value})}
                         />
                       </div>
                       <div className="grid gap-2">
-                        <Label>Cor da Etiqueta</Label>
+                        <Label>Tag Color</Label>
                         <div className="flex flex-wrap gap-2">
                           {['blue', 'yellow', 'purple', 'green', 'red', 'orange', 'indigo', 'pink'].map(color => (
                             <button
@@ -1422,7 +1422,7 @@ const CRM = () => {
                     <DialogFooter>
                       <Button onClick={handleCreateStatus} disabled={saving}>
                         {saving ? <RefreshCcw className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
-                        Salvar Etiqueta
+                        Save Tag
                       </Button>
                     </DialogFooter>
                   </DialogContent>
@@ -1431,15 +1431,15 @@ const CRM = () => {
                 <Dialog open={isEditStatusDialogOpen} onOpenChange={setIsEditStatusDialogOpen}>
                   <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
-                      <DialogTitle>Editar Etiqueta Kanban</DialogTitle>
+                      <DialogTitle>Edit Kanban Tag</DialogTitle>
                       <DialogDescription>
-                        Altere as informações da etapa do seu funil.
+                        Change the information of your funnel stage.
                       </DialogDescription>
                     </DialogHeader>
                     {editingStatus && (
                       <div className="grid gap-4 py-4">
                         <div className="grid gap-2">
-                          <Label htmlFor="edit-status-label">Nome da Etiqueta</Label>
+                          <Label htmlFor="edit-status-label">Tag Name</Label>
                           <Input 
                             id="edit-status-label" 
                             value={editingStatus.label}
@@ -1447,7 +1447,7 @@ const CRM = () => {
                           />
                         </div>
                         <div className="grid gap-2">
-                          <Label>Cor da Etiqueta</Label>
+                          <Label>Tag Color</Label>
                           <div className="flex flex-wrap gap-2">
                             {['blue', 'yellow', 'purple', 'green', 'red', 'orange', 'indigo', 'pink'].map(color => (
                               <button
@@ -1475,17 +1475,17 @@ const CRM = () => {
                     <DialogFooter>
                       <Button onClick={handleUpdateStatus} disabled={saving}>
                         {saving ? <RefreshCcw className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
-                        Salvar Alterações
+                        Save Changes
                       </Button>
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>
                 <Button variant="outline" size="sm" onClick={() => setIsImportExportOpen(true)}>
-                  <FileUp className="w-4 h-4 mr-2" /> Importar/Exportar
+                  <FileUp className="w-4 h-4 mr-2" /> Import/Export
                 </Button>
                 <Button variant="outline" size="sm" onClick={() => setKanbanView(!kanbanView)}>
                   {kanbanView ? <MessageSquare className="w-4 h-4 mr-2" /> : <BarChart3 className="w-4 h-4 mr-2" />}
-                  {kanbanView ? 'Lista' : 'Kanban'}
+                  {kanbanView ? 'List' : 'Kanban'}
                 </Button>
               </div>
             )}
@@ -1496,15 +1496,15 @@ const CRM = () => {
               <ScrollArea className="flex-1 p-8">
                 <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                   <div>
-                    <h2 className="text-3xl font-bold tracking-tight">Métricas Gerais</h2>
-                    <p className="text-muted-foreground">Visão geral do desempenho da sua operação.</p>
+                    <h2 className="text-3xl font-bold tracking-tight">General Metrics</h2>
+                    <p className="text-muted-foreground">Overview of your operation performance.</p>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     {[
-                      { label: 'Mensagens Enviadas', value: metrics.sent_count, icon: Send, color: 'blue' },
-                      { label: 'Respondidas', value: metrics.responded_count, icon: MessageSquare, color: 'yellow' },
-                      { label: 'Contatos Qualificados', value: metrics.qualified_count, icon: CheckCircle2, color: 'purple' },
-                      { label: 'Vendas Fechadas', value: metrics.sales_count, icon: DollarSign, color: 'green' },
+                      { label: 'Sent Messages', value: metrics.sent_count, icon: Send, color: 'blue' },
+                      { label: 'Responded', value: metrics.responded_count, icon: MessageSquare, color: 'yellow' },
+                      { label: 'Qualified Contacts', value: metrics.qualified_count, icon: CheckCircle2, color: 'purple' },
+                      { label: 'Closed Sales', value: metrics.sales_count, icon: DollarSign, color: 'green' },
                     ].map((stat, i) => (
                       <Card key={i} className="relative overflow-hidden group hover:shadow-lg transition-all border-zinc-100 dark:border-zinc-800">
                         <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -1529,12 +1529,12 @@ const CRM = () => {
                 {kanbanView ? (
                   <div className="flex-1 overflow-x-auto p-4 flex gap-4 bg-muted/5">
                     {(kanbanStatuses.length > 0 ? kanbanStatuses : [
-                      { value: 'new', label: 'Novo Lead', color: 'blue' },
-                      { value: 'responded', label: 'Em Atendimento', color: 'yellow' },
-                      { value: 'qualified', label: 'Qualificado', color: 'purple' },
-                      { value: 'human', label: '+ HUMANO', color: 'orange' },
-                      { value: 'closed', label: 'Venda Fechada', color: 'green' },
-                      { value: 'lost', label: 'Perdido', color: 'red' }
+                      { value: 'new', label: 'New Lead', color: 'blue' },
+                      { value: 'responded', label: 'In Service', color: 'yellow' },
+                      { value: 'qualified', label: 'Qualified', color: 'purple' },
+                      { value: 'human', label: '+ HUMAN', color: 'orange' },
+                      { value: 'closed', label: 'Closed Sale', color: 'green' },
+                      { value: 'lost', label: 'Lost', color: 'red' }
                     ]).map(status => (
                       <div 
                         key={status.value} 
@@ -1618,7 +1618,7 @@ const CRM = () => {
                           ))}
                           {contacts.filter(c => c.status === status.value && c.last_interaction !== null).length === 0 && (
                             <div className="h-20 flex items-center justify-center border-2 border-dashed border-muted rounded-xl opacity-40">
-                              <p className="text-[10px] font-bold uppercase tracking-widest">Vazio</p>
+                              <p className="text-[10px] font-bold uppercase tracking-widest">Empty</p>
                             </div>
                           )}
                         </ScrollArea>
@@ -1635,7 +1635,7 @@ const CRM = () => {
                         <div className="relative">
                           <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                           <Input 
-                            placeholder="Buscar contatos..." 
+                            placeholder="Search contacts..." 
                             className="pl-9 bg-muted/50 border-none h-10"
                             onChange={e => setStatusFilter(e.target.value || 'all')} 
                           />
@@ -1644,7 +1644,7 @@ const CRM = () => {
                           <AccordionItem value="tags" className="border-none">
                             <AccordionTrigger className="py-2 hover:no-underline text-xs font-semibold text-muted-foreground flex gap-2">
                               <ListFilter className="w-3.5 h-3.5" />
-                              Filtrar por Etiquetas
+                              Filter by Tags
                             </AccordionTrigger>
                             <AccordionContent>
                               <div className="flex flex-wrap gap-1 pb-1 pt-1">
@@ -1659,7 +1659,7 @@ const CRM = () => {
                                     )}
                                     onClick={() => setStatusFilter(s)}
                                   >
-                                    {s === 'all' ? '🚀 Todos' : getStatusLabel(s)}
+                                    {s === 'all' ? '🚀 All' : getStatusLabel(s)}
                                   </Badge>
                                 ))}
                               </div>
@@ -1703,7 +1703,7 @@ const CRM = () => {
                                             contact.flow_state === 'error' ? "bg-red-500/10 text-red-600" : "bg-primary/10 text-primary animate-pulse"
                                           )}
                                         >
-                                          {contact.flow_state === 'error' ? 'Erro' : 'Ativo'}
+                                          {contact.flow_state === 'error' ? 'Error' : 'Active'}
                                         </Badge>
                                         <button 
                                           onClick={(e) => {
@@ -1733,7 +1733,7 @@ const CRM = () => {
                           ))
                         ) : (
                           <div className="p-8 text-center text-muted-foreground text-sm italic">
-                            Nenhum contato encontrado
+                            No contact found
                           </div>
                         )}
                       </ScrollArea>
@@ -2538,12 +2538,12 @@ const CRM = () => {
                   <div className="flex justify-between items-center bg-card p-6 rounded-2xl border shadow-sm">
                     <div>
                       <h2 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-                        <Bot className="w-6 h-6 text-primary" /> Agente de Inteligência Artificial
+                        <Bot className="w-6 h-6 text-primary" /> Artificial Intelligence Agent
                       </h2>
-                      <p className="text-muted-foreground text-sm">Configure como a IA deve interagir com seus clientes.</p>
+                      <p className="text-muted-foreground text-sm">Configure how the AI should interact with your customers.</p>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Label htmlFor="ai-agent-enabled" className="text-sm font-bold">Ativação Geral</Label>
+                      <Label htmlFor="ai-agent-enabled" className="text-sm font-bold">General Activation</Label>
                       <Switch 
                         id="ai-agent-enabled"
                         checked={metaSettings.ai_agent_enabled}
@@ -2556,9 +2556,9 @@ const CRM = () => {
                     <Card className="rounded-2xl shadow-sm border overflow-hidden flex flex-col">
                       <CardHeader className="bg-zinc-50 dark:bg-zinc-900/50 border-b">
                         <CardTitle className="text-lg flex items-center gap-2">
-                          <LinkIcon className="w-4 h-4 text-zinc-600" /> Motor da IA
+                          <LinkIcon className="w-4 h-4 text-zinc-600" /> AI Engine
                         </CardTitle>
-                        <CardDescription>Conexão e Modo de Operação</CardDescription>
+                        <CardDescription>Connection and Operation Mode</CardDescription>
                       </CardHeader>
                       <CardContent className="p-6 space-y-6 flex-1">
                         <div className="space-y-2">
@@ -2571,12 +2571,12 @@ const CRM = () => {
                             value={metaSettings.openai_api_key}
                             onChange={(e) => setMetaSettings({...metaSettings, openai_api_key: e.target.value})}
                           />
-                          <p className="text-[10px] text-muted-foreground italic">Use uma chave da OpenAI (GPT-4o recomendado).</p>
+                          <p className="text-[10px] text-muted-foreground italic">Use an OpenAI key (GPT-4o recommended).</p>
                         </div>
 
                         <div className="space-y-2">
                           <Label className="text-sm font-bold flex items-center gap-2">
-                            <Zap className="w-4 h-4 text-amber-500" /> Modo de Operação
+                            <Zap className="w-4 h-4 text-amber-500" /> Operation Mode
                           </Label>
                           <Select 
                             value={metaSettings.ai_operation_mode || 'chat'} 
@@ -2586,13 +2586,13 @@ const CRM = () => {
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="chat">Apenas Conversar (I.A. Ativa)</SelectItem>
-                              <SelectItem value="monitor">Apenas Qualificar (Passiva)</SelectItem>
-                              <SelectItem value="hybrid">Híbrido (Conversa e Qualifica)</SelectItem>
+                              <SelectItem value="chat">Chat Only (AI Active)</SelectItem>
+                              <SelectItem value="monitor">Qualify Only (Passive)</SelectItem>
+                              <SelectItem value="hybrid">Hybrid (Chat and Qualify)</SelectItem>
                             </SelectContent>
                           </Select>
                           <p className="text-[10px] text-muted-foreground italic">
-                            "Passiva" fará com que a IA não envie mensagens, apenas analise o contato.
+                            "Passive" will make the AI not send messages, only analyze the contact.
                           </p>
                         </div>
                       </CardContent>
@@ -2601,14 +2601,14 @@ const CRM = () => {
                     <Card className="rounded-2xl shadow-sm border overflow-hidden flex flex-col">
                       <CardHeader className="bg-amber-50 dark:bg-amber-900/10 border-b">
                         <CardTitle className="text-lg flex items-center gap-2 text-amber-700 dark:text-amber-500">
-                          <TrendingUp className="w-4 h-4" /> Estratégias e Gatilhos
+                          <TrendingUp className="w-4 h-4" /> Strategies and Triggers
                         </CardTitle>
-                        <CardDescription>Quando e como o agente entra em ação</CardDescription>
+                        <CardDescription>When and how the agent takes action</CardDescription>
                       </CardHeader>
                       <CardContent className="p-6 space-y-6 flex-1">
                         <div className="space-y-2">
                           <Label className="text-sm font-bold flex items-center gap-2">
-                            Gatilho de Ativação
+                            Activation Trigger
                           </Label>
                           <Select 
                             value={metaSettings.ai_agent_trigger || 'all'} 
@@ -2618,10 +2618,10 @@ const CRM = () => {
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="all">Qualquer Mensagem (Sempre Ativo)</SelectItem>
-                              <SelectItem value="keyword">Mensagem Específica (Palavra-chave)</SelectItem>
-                              <SelectItem value="first_message">Primeira Mensagem do Cliente</SelectItem>
-                              <SelectItem value="manual">Ativação Manual apenas</SelectItem>
+                              <SelectItem value="all">Any Message (Always Active)</SelectItem>
+                              <SelectItem value="keyword">Specific Message (Keyword)</SelectItem>
+                              <SelectItem value="first_message">First Customer Message</SelectItem>
+                              <SelectItem value="manual">Manual Activation only</SelectItem>
                             </SelectContent>
                           </Select>
                           
@@ -2640,9 +2640,9 @@ const CRM = () => {
                           <div className="flex items-center justify-between p-3 bg-indigo-500/5 rounded-xl border border-indigo-200">
                             <div className="space-y-0.5">
                               <Label className="text-xs font-bold flex items-center gap-2">
-                                <TrendingUp className="w-3.5 h-3.5 text-indigo-600" /> Auto-Estratégia
+                                <TrendingUp className="w-3.5 h-3.5 text-indigo-600" /> Auto-Strategy
                               </Label>
-                              <p className="text-[10px] text-muted-foreground">Gerar estratégias automáticas.</p>
+                              <p className="text-[10px] text-muted-foreground">Generate automatic strategies.</p>
                             </div>
                             <Switch 
                               checked={metaSettings.auto_generate_strategy}
@@ -2650,11 +2650,11 @@ const CRM = () => {
                             />
                           </div>
                           <div className="space-y-1">
-                            <Label className="text-[11px] font-bold">Prompt de Estratégia</Label>
+                            <Label className="text-[11px] font-bold">Strategy Prompt</Label>
                             <Textarea 
                               rows={2}
                               className="resize-none text-xs"
-                              placeholder="Como a IA deve gerar as estratégias..."
+                              placeholder="How the AI should generate strategies..."
                               value={metaSettings.strategy_generation_prompt}
                               onChange={(e) => setMetaSettings({...metaSettings, strategy_generation_prompt: e.target.value})}
                             />
@@ -2667,12 +2667,12 @@ const CRM = () => {
                       <CardHeader className="bg-blue-50 dark:bg-blue-900/10 border-b flex flex-row items-center justify-between">
                         <div>
                           <CardTitle className="text-lg flex items-center gap-2 text-blue-700 dark:text-blue-400">
-                            <Clock className="w-4 h-4" /> Gestão de Horário Comercial
+                            <Clock className="w-4 h-4" /> Business Hours Management
                           </CardTitle>
-                          <CardDescription>Defina quando o agente deve avisar sobre ausência</CardDescription>
+                          <CardDescription>Define when the agent should notify about absence</CardDescription>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Label className="text-xs font-bold">Ativar Função</Label>
+                          <Label className="text-xs font-bold">Activate Function</Label>
                           <Switch 
                             checked={metaSettings.business_hours_enabled}
                             onCheckedChange={(val) => setMetaSettings({...metaSettings, business_hours_enabled: val})}
@@ -2685,7 +2685,7 @@ const CRM = () => {
                             <div className="grid grid-cols-2 gap-4">
                               <div className="space-y-1.5">
                                 <Label className="text-[10px] uppercase font-bold text-muted-foreground flex items-center gap-1">
-                                  <Clock className="w-3 h-3" /> Início
+                                  <Clock className="w-3 h-3" /> Start
                                 </Label>
                                 <Input 
                                   type="time" 
@@ -2696,7 +2696,7 @@ const CRM = () => {
                               </div>
                               <div className="space-y-1.5">
                                 <Label className="text-[10px] uppercase font-bold text-muted-foreground flex items-center gap-1">
-                                  <Clock className="w-3 h-3" /> Fim
+                                  <Clock className="w-3 h-3" /> End
                                 </Label>
                                 <Input 
                                   type="time" 
@@ -2707,7 +2707,7 @@ const CRM = () => {
                               </div>
                             </div>
                             <div className="space-y-1.5">
-                              <Label className="text-[10px] uppercase font-bold text-muted-foreground">Fuso Horário</Label>
+                              <Label className="text-[10px] uppercase font-bold text-muted-foreground">Time Zone</Label>
                               <Select 
                                 value={metaSettings.business_hours_tz} 
                                 onValueChange={(val) => setMetaSettings({...metaSettings, business_hours_tz: val})}
@@ -2717,7 +2717,7 @@ const CRM = () => {
                                 </SelectTrigger>
                                 <SelectContent>
                                   <SelectItem value="America/Sao_Paulo">Brasília (GMT-3)</SelectItem>
-                                  <SelectItem value="Europe/Lisbon">Lisboa (GMT+0)</SelectItem>
+                                  <SelectItem value="Europe/Lisbon">Lisbon (GMT+0)</SelectItem>
                                   <SelectItem value="UTC">UTC</SelectItem>
                                 </SelectContent>
                               </Select>
@@ -2726,17 +2726,17 @@ const CRM = () => {
 
                           <div className="md:col-span-2 space-y-2">
                             <Label className="text-sm font-bold flex items-center gap-2">
-                              Mensagem de Ausência (Fora de Horário)
+                              Absence Message (Out of Hours)
                             </Label>
                             <Textarea 
                               rows={4}
                               className="resize-none text-sm"
-                              placeholder="Nossos administradores não estão ativos no momento..."
+                              placeholder="Our administrators are not active at the moment..."
                               value={metaSettings.outside_hours_message}
                               onChange={(e) => setMetaSettings({...metaSettings, outside_hours_message: e.target.value})}
                             />
                             <p className="text-[10px] text-muted-foreground italic">
-                              Esta mensagem será enviada pela IA caso ela seja acionada fora do horário comercial definido.
+                              This message will be sent by the AI if it is triggered outside defined business hours.
                             </p>
                           </div>
                         </div>
@@ -2746,9 +2746,9 @@ const CRM = () => {
                     <Card className="rounded-2xl shadow-sm border overflow-hidden md:col-span-2">
                       <CardHeader className="bg-primary/5 border-b">
                         <CardTitle className="text-lg flex items-center gap-2">
-                          <Bot className="w-5 h-5 text-primary" /> Instruções do Agente (Cérebro)
+                          <Bot className="w-5 h-5 text-primary" /> Agent Instructions (Brain)
                         </CardTitle>
-                        <CardDescription>Defina a personalidade e o objetivo do seu robô</CardDescription>
+                        <CardDescription>Define the personality and goal of your robot</CardDescription>
                       </CardHeader>
                       <CardContent className="p-6 space-y-4">
                         <div className="space-y-2">
