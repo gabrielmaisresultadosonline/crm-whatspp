@@ -3481,98 +3481,22 @@ const CRM = () => {
 
                           {metaSettings.connection_type === 'wpp-web' && (
                             <div className="space-y-4 animate-in fade-in slide-in-from-top-2">
-                              <div className="flex flex-col items-center justify-center p-6 bg-background rounded-xl border border-dashed gap-4">
-                                {metaSettings.wpp_web_qr_code ? (
-                                  <>
-                                    <div className="bg-white p-4 rounded-lg shadow-sm">
-                                      <img src={metaSettings.wpp_web_qr_code} alt="WhatsApp QR Code" className="w-48 h-48" />
-                                    </div>
-                                    <p className="text-xs font-medium animate-pulse text-primary">Escaneie o QR Code para conectar</p>
-                                  </>
-                                ) : metaSettings.wpp_web_status === 'connected' ? (
-                                  <div className="flex flex-col items-center gap-2">
-                                    <div className="w-16 h-16 rounded-full bg-green-500/10 flex items-center justify-center">
-                                      <CheckCircle2 className="w-10 h-10 text-green-500" />
-                                    </div>
-                                    <p className="text-sm font-bold text-green-600">Conectado</p>
-                                    <Badge variant="outline" className="text-[10px] uppercase">{metaSettings.wpp_web_session_id}</Badge>
-                                  </div>
-                                ) : (
-                                  <div className="flex flex-col items-center gap-3">
-                                    <RefreshCcw className="w-8 h-8 text-muted-foreground animate-spin" />
-                                    <p className="text-xs text-muted-foreground">Iniciando sessão ou aguardando QR Code...</p>
-                                    <Button 
-                                      size="sm" 
-                                      variant="outline" 
-                                      className="mt-2"
-                                      onClick={async () => {
-                                        setSaving(true);
-                                        try {
-                                          await supabase.from('wpp_bot_commands').insert([{ command: 'requestQr' }]);
-                                          await supabase.from('wpp_bot_session').update({
-                                            request_qr: true,
-                                            status: 'connecting',
-                                            qr_code: null
-                                          }).eq('id', 'renda_extra');
-                                          toast({ title: "Solicitação enviada", description: "O QR Code será gerado em instantes." });
-                                        } catch (e: any) {
-                                          toast({ title: "Erro", description: e.message, variant: "destructive" });
-                                        } finally {
-                                          setSaving(false);
-                                        }
-                                      }}
-                                    >
-                                      Gerar QR Code Agora
-                                    </Button>
-                                  </div>
-                                )}
-
-
-                              </div>
-                              <div className="flex gap-2">
-                              <Button 
-                                variant="outline" 
-                                className="flex-1 text-xs" 
-                                onClick={async () => {
-                                  setSaving(true);
-                                  try {
-                                    await supabase.from('wpp_bot_commands').insert([{ command: 'restart' }]);
-                                    await supabase.from('wpp_bot_session').update({ request_qr: true, status: 'connecting' }).eq('id', 'renda_extra');
-                                    toast({ title: "Sessão reiniciada" });
-                                    fetchData();
-                                  } catch (err: any) {
-                                    toast({ title: "Erro", description: err.message, variant: "destructive" });
-                                  } finally {
-                                    setSaving(false);
-                                  }
-                                }}
-                              >
-                                Reiniciar Sessão
-                              </Button>
-                              <Button 
-                                variant="destructive" 
-                                className="flex-1 text-xs"
-                                onClick={async () => {
-                                  if(!confirm('Deseja sair do WhatsApp Web?')) return;
-                                  setSaving(true);
-                                  try {
-                                    await supabase.from('wpp_bot_commands').insert([{ command: 'logout' }]);
-                                    await supabase.from('wpp_bot_session').update({ request_logout: true }).eq('id', 'renda_extra');
-                                    toast({ title: "Sessão finalizada" });
-                                    fetchData();
-                                  } catch (err: any) {
-                                    toast({ title: "Erro", description: err.message, variant: "destructive" });
-                                  } finally {
-                                    setSaving(false);
-                                  }
-                                }}
-                              >
-                                Logout
-                              </Button>
-
+                              <div className="flex flex-col items-center justify-center p-6 bg-background rounded-xl border border-dashed gap-4 text-center">
+                                <QrCode className="w-12 h-12 text-primary/40 mb-2" />
+                                <div className="space-y-1">
+                                  <p className="font-bold text-sm">Painel WhatsApp QR Ativo</p>
+                                  <p className="text-xs text-muted-foreground">Você está usando a conexão via QR Code. Para gerenciar conexões, QR Code e conversas diretas, acesse a nova ferramenta.</p>
+                                </div>
+                                <Button 
+                                  onClick={() => navigate('/whatsapp-qr')}
+                                  className="w-full bg-primary font-bold rounded-xl shadow-lg shadow-primary/20 h-11"
+                                >
+                                  Acessar Painel QR Code
+                                </Button>
                               </div>
                             </div>
                           )}
+
                         </div>
                       </CardContent>
                     </Card>
