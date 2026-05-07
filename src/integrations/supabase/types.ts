@@ -756,6 +756,7 @@ export type Database = {
           total_messages_received: number | null
           total_messages_sent: number | null
           wa_id: string
+          whatsapp_type: string | null
         }
         Insert: {
           ai_active?: boolean | null
@@ -781,6 +782,7 @@ export type Database = {
           total_messages_received?: number | null
           total_messages_sent?: number | null
           wa_id: string
+          whatsapp_type?: string | null
         }
         Update: {
           ai_active?: boolean | null
@@ -806,6 +808,7 @@ export type Database = {
           total_messages_received?: number | null
           total_messages_sent?: number | null
           wa_id?: string
+          whatsapp_type?: string | null
         }
         Relationships: [
           {
@@ -1103,6 +1106,7 @@ export type Database = {
           business_hours_end: string | null
           business_hours_start: string | null
           business_hours_tz: string | null
+          connection_type: string | null
           created_at: string | null
           id: string
           initial_auto_response_enabled: boolean | null
@@ -1121,6 +1125,9 @@ export type Database = {
           tag_size: number | null
           updated_at: string | null
           webhook_verify_token: string | null
+          wpp_web_qr_code: string | null
+          wpp_web_session_id: string | null
+          wpp_web_status: string | null
         }
         Insert: {
           ai_agent_enabled?: boolean | null
@@ -1133,6 +1140,7 @@ export type Database = {
           business_hours_end?: string | null
           business_hours_start?: string | null
           business_hours_tz?: string | null
+          connection_type?: string | null
           created_at?: string | null
           id?: string
           initial_auto_response_enabled?: boolean | null
@@ -1151,6 +1159,9 @@ export type Database = {
           tag_size?: number | null
           updated_at?: string | null
           webhook_verify_token?: string | null
+          wpp_web_qr_code?: string | null
+          wpp_web_session_id?: string | null
+          wpp_web_status?: string | null
         }
         Update: {
           ai_agent_enabled?: boolean | null
@@ -1163,6 +1174,7 @@ export type Database = {
           business_hours_end?: string | null
           business_hours_start?: string | null
           business_hours_tz?: string | null
+          connection_type?: string | null
           created_at?: string | null
           id?: string
           initial_auto_response_enabled?: boolean | null
@@ -1181,6 +1193,9 @@ export type Database = {
           tag_size?: number | null
           updated_at?: string | null
           webhook_verify_token?: string | null
+          wpp_web_qr_code?: string | null
+          wpp_web_session_id?: string | null
+          wpp_web_status?: string | null
         }
         Relationships: [
           {
