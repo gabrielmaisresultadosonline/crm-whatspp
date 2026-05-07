@@ -303,7 +303,12 @@ const CRM = () => {
     setLoading(true);
     try {
       const { data: settingsData } = await supabase.from('crm_settings').select('*').maybeSingle();
-      if (settingsData) setMetaSettings(settingsData);
+      if (settingsData) {
+        setMetaSettings(settingsData);
+        if (settingsData.connection_type) {
+          setShowConnectionChoice(false);
+        }
+      }
 
       const { data: metricsData } = await supabase
         .from('crm_metrics')
