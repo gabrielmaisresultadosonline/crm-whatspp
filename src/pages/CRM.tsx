@@ -338,11 +338,11 @@ const CRM = () => {
       const { error } = await supabase.from('crm_settings').upsert({
         ...rest,
         id: '00000000-0000-0000-0000-000000000001',
-        strategy_generation_prompt: 'Analise o histórico acima e gere 3 estratégias personalizadas para converter este cliente. Sugira também 2 perguntas que eliminem as principais dúvidas dele sob o cabeçalho "### Perguntas para Eliminar Dúvidas". As perguntas devem ser diretas para copiar e colar.',
+        strategy_generation_prompt: 'Analyze the history above and generate 3 personalized strategies to convert this customer. Also suggest 2 questions that eliminate their main doubts under the heading "### Questions to Eliminate Doubts". The questions should be direct for copying and pasting.',
         updated_at: new Date().toISOString()
       }, { onConflict: 'id' });
       if (error) throw error;
-      toast({ title: "Configurações salvas!" });
+      toast({ title: "Settings saved!" });
       fetchData();
     } catch (error) {
       toast({ title: "Erro ao salvar", variant: "destructive" });
