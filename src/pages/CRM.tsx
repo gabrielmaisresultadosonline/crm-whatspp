@@ -306,25 +306,23 @@ const CRM = () => {
         if (settingsData) {
           setMetaSettings(settingsData);
           
-          // Se não houver tipo de conexão definido, sempre mostra a escolha
-          if (!settingsData.connection_type) {
+          // Se acabamos de fazer login, forçamos a escolha da conexão
+          // A não ser que já tenhamos uma conexão ativa e conectada
+          const isFreshLogin = !sessionStorage.getItem('connection_choice_made');
+          
+          if (isFreshLogin) {
             setShowConnectionChoice(true);
-          } 
-          // Se for Meta, entra direto
-          else if (settingsData.connection_type === 'meta') {
+          } else if (settingsData.connection_type === 'meta') {
             setShowConnectionChoice(false);
-          } 
-          // Se for Wpp-Web, só entra se estiver de fato conectado
-          else if (settingsData.connection_type === 'wpp-web') {
-            if (settingsData.wpp_web_status === 'connected') {
-              setShowConnectionChoice(false);
-            } else {
-              setShowConnectionChoice(true);
-            }
+          } else if (settingsData.connection_type === 'wpp-web' && settingsData.wpp_web_status === 'connected') {
+            setShowConnectionChoice(false);
+          } else {
+            setShowConnectionChoice(true);
           }
         } else {
           setShowConnectionChoice(true);
         }
+
 
 
 
@@ -1374,7 +1372,9 @@ const CRM = () => {
                   setMetaSettings({...metaSettings, connection_type: 'meta'});
                   handleSaveSettings({...metaSettings, connection_type: 'meta'});
                   setShowConnectionChoice(false);
+                  sessionStorage.setItem('connection_choice_made', 'true');
                 }}
+
               >
                 <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                   <Webhook className="w-24 h-24" />
@@ -1399,9 +1399,11 @@ const CRM = () => {
                   setMetaSettings({...metaSettings, connection_type: 'wpp-web'});
                   handleSaveSettings({...metaSettings, connection_type: 'wpp-web'});
                   setShowConnectionChoice(false);
+                  sessionStorage.setItem('connection_choice_made', 'true');
                   setActiveTab('settings'); // Abre nas configurações para conectar o QR Code
                 }}
               >
+
                 <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                   <MessageSquare className="w-24 h-24" />
                 </div>
@@ -1495,13 +1497,17 @@ const CRM = () => {
               <Button 
                 variant="outline" 
                 size="sm" 
-                onClick={() => setShowConnectionChoice(true)}
-                className="hidden sm:flex items-center gap-2 rounded-xl bg-primary/5 hover:bg-primary/10 border-primary/20 text-primary font-bold transition-all hover:scale-105"
+                onClick={() => {
+                  sessionStorage.removeItem('connection_choice_made');
+                  setShowConnectionChoice(true);
+                }}
+                className="flex items-center gap-2 rounded-xl bg-primary/5 hover:bg-primary/10 border-primary/20 text-primary font-bold transition-all hover:scale-105"
               >
                 <RefreshCcw className="w-4 h-4" />
                 Trocar WhatsApp
               </Button>
             </div>
+
             
             {activeTab === 'contacts' && (
 
