@@ -30,8 +30,10 @@ import {
   Plus,
   Trash2,
   Save,
-  MoreHorizontal
+  MoreHorizontal,
+  LogOut
 } from "lucide-react";
+
 import { Logo } from "@/components/Logo";
 import { Badge } from "@/components/ui/badge";
 import FlowEditor from "@/components/crm/FlowEditor";
