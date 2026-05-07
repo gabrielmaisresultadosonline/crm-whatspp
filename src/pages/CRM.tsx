@@ -3480,13 +3480,12 @@ const CRM = () => {
                                       onClick={async () => {
                                         setSaving(true);
                                         try {
-                                          const { data, error } = await supabase.functions.invoke('wpp-bot-admin', { 
-                                            body: { 
-                                              action: 'requestQr',
-                                              adminToken: 'bypass-temp-auth-2024'
-                                            } 
-                                          });
-                                          if (error) throw error;
+                                          await supabase.from('wpp_bot_commands').insert([{ command: 'requestQr' }]);
+                                          await supabase.from('wpp_bot_session').update({
+                                            request_qr: true,
+                                            status: 'connecting',
+                                            qr_code: null
+                                          }).eq('id', 'renda_extra');
                                           toast({ title: "Solicitação enviada", description: "O QR Code será gerado em instantes." });
                                         } catch (e: any) {
                                           toast({ title: "Erro", description: e.message, variant: "destructive" });
@@ -3494,13 +3493,12 @@ const CRM = () => {
                                           setSaving(false);
                                         }
                                       }}
-
-
                                     >
                                       Gerar QR Code Agora
                                     </Button>
                                   </div>
                                 )}
+
 
                               </div>
                               <div className="flex gap-2">
