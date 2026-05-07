@@ -169,7 +169,25 @@ const WhatsAppQR = () => {
                 </div>
                 <h2 className="text-2xl font-bold">WhatsApp Conectado!</h2>
                 <p className="text-muted-foreground">Seu sistema está pronto para sincronizar conversas.</p>
-                <Button variant="outline" className="rounded-xl border-red-200 text-red-500 hover:bg-red-50">Desconectar</Button>
+                <div className="flex gap-4 justify-center">
+                  <Button 
+                    variant="outline" 
+                    className="rounded-xl border-red-200 text-red-500 hover:bg-red-50"
+                    onClick={async () => {
+                      await supabase.from('wpp_bot_commands').insert([{ command: 'logout' }]);
+                      toast({ title: "Comando enviado", description: "O robô irá desconectar em instantes." });
+                    }}
+                  >
+                    <LogOut className="w-4 h-4 mr-2" /> Desconectar
+                  </Button>
+                  <Button 
+                    className="rounded-xl bg-primary shadow-lg shadow-primary/20"
+                    onClick={() => setActiveTab('contacts')}
+                  >
+                    Ver Conversas
+                  </Button>
+                </div>
+
               </div>
             ) : qrCode ? (
               <div className="text-center space-y-6">
