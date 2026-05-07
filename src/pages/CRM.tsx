@@ -345,11 +345,8 @@ const CRM = () => {
         }
       };
 
-      if (metaSettings.connection_type === 'wpp-web') {
-        syncWppStatus();
-        const interval = setInterval(syncWppStatus, 5000);
-        return () => clearInterval(interval);
-      }
+      const interval = setInterval(syncWppStatus, 5000);
+      return () => clearInterval(interval);
 
       const { data: metricsData } = await supabase
 
