@@ -2726,17 +2726,17 @@ const CRM = () => {
 
                           <div className="md:col-span-2 space-y-2">
                             <Label className="text-sm font-bold flex items-center gap-2">
-                              Mensagem de Ausência (Fora de Horário)
+                              Absence Message (Out of Hours)
                             </Label>
                             <Textarea 
                               rows={4}
                               className="resize-none text-sm"
-                              placeholder="Nossos administradores não estão ativos no momento..."
+                              placeholder="Our administrators are not active at the moment..."
                               value={metaSettings.outside_hours_message}
                               onChange={(e) => setMetaSettings({...metaSettings, outside_hours_message: e.target.value})}
                             />
                             <p className="text-[10px] text-muted-foreground italic">
-                              Esta mensagem será enviada pela IA caso ela seja acionada fora do horário comercial definido.
+                              This message will be sent by the AI if it is triggered outside defined business hours.
                             </p>
                           </div>
                         </div>
@@ -2746,9 +2746,9 @@ const CRM = () => {
                     <Card className="rounded-2xl shadow-sm border overflow-hidden md:col-span-2">
                       <CardHeader className="bg-primary/5 border-b">
                         <CardTitle className="text-lg flex items-center gap-2">
-                          <Bot className="w-5 h-5 text-primary" /> Instruções do Agente (Cérebro)
+                          <Bot className="w-5 h-5 text-primary" /> Agent Instructions (Brain)
                         </CardTitle>
-                        <CardDescription>Defina a personalidade e o objetivo do seu robô</CardDescription>
+                        <CardDescription>Define the personality and goal of your robot</CardDescription>
                       </CardHeader>
                       <CardContent className="p-6 space-y-4">
                         <div className="space-y-2">
