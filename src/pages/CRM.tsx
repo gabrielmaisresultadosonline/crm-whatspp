@@ -306,25 +306,23 @@ const CRM = () => {
         if (settingsData) {
           setMetaSettings(settingsData);
           
-          // Se não houver tipo de conexão definido, sempre mostra a escolha
-          if (!settingsData.connection_type) {
+          // Se acabamos de fazer login, forçamos a escolha da conexão
+          // A não ser que já tenhamos uma conexão ativa e conectada
+          const isFreshLogin = !sessionStorage.getItem('connection_choice_made');
+          
+          if (isFreshLogin) {
             setShowConnectionChoice(true);
-          } 
-          // Se for Meta, entra direto
-          else if (settingsData.connection_type === 'meta') {
+          } else if (settingsData.connection_type === 'meta') {
             setShowConnectionChoice(false);
-          } 
-          // Se for Wpp-Web, só entra se estiver de fato conectado
-          else if (settingsData.connection_type === 'wpp-web') {
-            if (settingsData.wpp_web_status === 'connected') {
-              setShowConnectionChoice(false);
-            } else {
-              setShowConnectionChoice(true);
-            }
+          } else if (settingsData.connection_type === 'wpp-web' && settingsData.wpp_web_status === 'connected') {
+            setShowConnectionChoice(false);
+          } else {
+            setShowConnectionChoice(true);
           }
         } else {
           setShowConnectionChoice(true);
         }
+
 
 
 
