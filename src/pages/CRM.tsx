@@ -2640,9 +2640,9 @@ const CRM = () => {
                           <div className="flex items-center justify-between p-3 bg-indigo-500/5 rounded-xl border border-indigo-200">
                             <div className="space-y-0.5">
                               <Label className="text-xs font-bold flex items-center gap-2">
-                                <TrendingUp className="w-3.5 h-3.5 text-indigo-600" /> Auto-Estratégia
+                                <TrendingUp className="w-3.5 h-3.5 text-indigo-600" /> Auto-Strategy
                               </Label>
-                              <p className="text-[10px] text-muted-foreground">Gerar estratégias automáticas.</p>
+                              <p className="text-[10px] text-muted-foreground">Generate automatic strategies.</p>
                             </div>
                             <Switch 
                               checked={metaSettings.auto_generate_strategy}
@@ -2650,11 +2650,11 @@ const CRM = () => {
                             />
                           </div>
                           <div className="space-y-1">
-                            <Label className="text-[11px] font-bold">Prompt de Estratégia</Label>
+                            <Label className="text-[11px] font-bold">Strategy Prompt</Label>
                             <Textarea 
                               rows={2}
                               className="resize-none text-xs"
-                              placeholder="Como a IA deve gerar as estratégias..."
+                              placeholder="How the AI should generate strategies..."
                               value={metaSettings.strategy_generation_prompt}
                               onChange={(e) => setMetaSettings({...metaSettings, strategy_generation_prompt: e.target.value})}
                             />
