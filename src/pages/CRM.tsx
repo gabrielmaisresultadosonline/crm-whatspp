@@ -2538,12 +2538,12 @@ const CRM = () => {
                   <div className="flex justify-between items-center bg-card p-6 rounded-2xl border shadow-sm">
                     <div>
                       <h2 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-                        <Bot className="w-6 h-6 text-primary" /> Agente de Inteligência Artificial
+                        <Bot className="w-6 h-6 text-primary" /> Artificial Intelligence Agent
                       </h2>
-                      <p className="text-muted-foreground text-sm">Configure como a IA deve interagir com seus clientes.</p>
+                      <p className="text-muted-foreground text-sm">Configure how the AI should interact with your customers.</p>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Label htmlFor="ai-agent-enabled" className="text-sm font-bold">Ativação Geral</Label>
+                      <Label htmlFor="ai-agent-enabled" className="text-sm font-bold">General Activation</Label>
                       <Switch 
                         id="ai-agent-enabled"
                         checked={metaSettings.ai_agent_enabled}
@@ -2556,9 +2556,9 @@ const CRM = () => {
                     <Card className="rounded-2xl shadow-sm border overflow-hidden flex flex-col">
                       <CardHeader className="bg-zinc-50 dark:bg-zinc-900/50 border-b">
                         <CardTitle className="text-lg flex items-center gap-2">
-                          <LinkIcon className="w-4 h-4 text-zinc-600" /> Motor da IA
+                          <LinkIcon className="w-4 h-4 text-zinc-600" /> AI Engine
                         </CardTitle>
-                        <CardDescription>Conexão e Modo de Operação</CardDescription>
+                        <CardDescription>Connection and Operation Mode</CardDescription>
                       </CardHeader>
                       <CardContent className="p-6 space-y-6 flex-1">
                         <div className="space-y-2">
