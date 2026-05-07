@@ -72,14 +72,51 @@ const WhatsAppQR = () => {
   const [editingFlow, setEditingFlow] = useState<any>(null);
 
   useEffect(() => {
+    selectedContactRef.current = selectedContact;
+    if (selectedContact) {
+      fetchMessages(selectedContact.id);
+    }
+  }, [selectedContact]);
+
+  useEffect(() => {
     if (!isAdminLoggedIn()) {
       navigate('/login');
       return;
     }
     fetchInitialData();
     const interval = setInterval(syncStatus, 5000);
-    return () => clearInterval(interval);
+
+    const channel = supabase
+      .channel('wpp_qr_updates')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'crm_messages' }, (payload) => {
+        const newMessage = payload.new;
+        if (selectedContactRef.current && newMessage.contact_id === selectedContactRef.current.id) {
+          setChatMessages(prev => {
+            if (prev.find(m => m.id === newMessage.id)) return prev;
+            return [...prev, newMessage];
+          });
+        }
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'crm_contacts' }, () => {
+        fetchInitialData();
+      })
+      .subscribe();
+
+    return () => {
+      clearInterval(interval);
+      supabase.removeChannel(channel);
+    };
   }, []);
+
+  const fetchMessages = async (contactId: string) => {
+    const { data } = await supabase
+      .from('crm_messages')
+      .select('*')
+      .eq('contact_id', contactId)
+      .order('created_at', { ascending: true });
+    setChatMessages(data || []);
+  };
+
 
   const fetchInitialData = async () => {
     setLoading(true);
