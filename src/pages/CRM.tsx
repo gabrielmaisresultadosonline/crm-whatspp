@@ -3269,10 +3269,123 @@ const CRM = () => {
                     <Card className="shadow-sm border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden hover:shadow-md transition-shadow bg-card">
                       <CardHeader className="bg-muted/30 border-b">
                         <div className="flex items-center gap-3">
+                          <div className="p-2 rounded-lg bg-primary/10 text-primary"><Settings className="w-5 h-5" /></div>
+                          <div>
+                            <CardTitle className="text-lg">Connection Method</CardTitle>
+                            <CardDescription className="text-[11px]">Choose how you want to connect to WhatsApp.</CardDescription>
+                          </div>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="p-6 space-y-5">
+                        <div className="space-y-4">
+                          <div className="flex flex-col gap-4 p-4 bg-muted/30 rounded-xl border">
+                            <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Select API Type</Label>
+                            <div className="flex bg-muted p-1 rounded-lg">
+                              <Button 
+                                variant={metaSettings.connection_type !== 'wpp-web' ? 'secondary' : 'ghost'} 
+                                className="flex-1 text-xs"
+                                onClick={() => setMetaSettings({...metaSettings, connection_type: 'meta'})}
+                              >
+                                <Facebook className="w-4 h-4 mr-2" /> Meta API
+                              </Button>
+                              <Button 
+                                variant={metaSettings.connection_type === 'wpp-web' ? 'secondary' : 'ghost'} 
+                                className="flex-1 text-xs"
+                                onClick={() => setMetaSettings({...metaSettings, connection_type: 'wpp-web'})}
+                              >
+                                <LinkIcon className="w-4 h-4 mr-2" /> Wpp-Web.js
+                              </Button>
+                            </div>
+                            <p className="text-[10px] text-muted-foreground">
+                              {metaSettings.connection_type === 'wpp-web' 
+                                ? "Using WhatsApp Web emulation (requires scanning QR code)." 
+                                : "Using Official Meta Cloud API (highly stable, requires Meta App)."}
+                            </p>
+                          </div>
+
+                          {metaSettings.connection_type === 'wpp-web' && (
+                            <div className="space-y-4 animate-in fade-in slide-in-from-top-2">
+                              <div className="flex flex-col items-center justify-center p-6 bg-background rounded-xl border border-dashed gap-4">
+                                {metaSettings.wpp_web_qr_code ? (
+                                  <>
+                                    <div className="bg-white p-4 rounded-lg shadow-sm">
+                                      <img src={metaSettings.wpp_web_qr_code} alt="WhatsApp QR Code" className="w-48 h-48" />
+                                    </div>
+                                    <p className="text-xs font-medium animate-pulse text-primary">Scan the QR code to connect</p>
+                                  </>
+                                ) : metaSettings.wpp_web_status === 'connected' ? (
+                                  <div className="flex flex-col items-center gap-2">
+                                    <div className="w-16 h-16 rounded-full bg-green-500/10 flex items-center justify-center">
+                                      <CheckCircle2 className="w-10 h-10 text-green-500" />
+                                    </div>
+                                    <p className="text-sm font-bold text-green-600">Connected</p>
+                                    <Badge variant="outline" className="text-[10px] uppercase">{metaSettings.wpp_web_session_id}</Badge>
+                                  </div>
+                                ) : (
+                                  <div className="flex flex-col items-center gap-3">
+                                    <RefreshCcw className="w-8 h-8 text-muted-foreground animate-spin" />
+                                    <p className="text-xs text-muted-foreground">Initializing session...</p>
+                                  </div>
+                                )}
+                              </div>
+                              <div className="flex gap-2">
+                                <Button 
+                                  variant="outline" 
+                                  className="flex-1 text-xs" 
+                                  onClick={async () => {
+                                    setSaving(true);
+                                    try {
+                                      const { data, error } = await supabase.functions.invoke('wpp-bot-admin', {
+                                        body: { action: 'restart' }
+                                      });
+                                      if (error) throw error;
+                                      toast({ title: "Session restarted" });
+                                      fetchData();
+                                    } catch (err: any) {
+                                      toast({ title: "Error", description: err.message, variant: "destructive" });
+                                    } finally {
+                                      setSaving(false);
+                                    }
+                                  }}
+                                >
+                                  Restart Session
+                                </Button>
+                                <Button 
+                                  variant="destructive" 
+                                  className="flex-1 text-xs"
+                                  onClick={async () => {
+                                    if(!confirm('Logout from WhatsApp Web?')) return;
+                                    setSaving(true);
+                                    try {
+                                      const { data, error } = await supabase.functions.invoke('wpp-bot-admin', {
+                                        body: { action: 'logout' }
+                                      });
+                                      if (error) throw error;
+                                      toast({ title: "Logged out" });
+                                      fetchData();
+                                    } catch (err: any) {
+                                      toast({ title: "Error", description: err.message, variant: "destructive" });
+                                    } finally {
+                                      setSaving(false);
+                                    }
+                                  }}
+                                >
+                                  Logout
+                                </Button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card className={cn("shadow-sm border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden hover:shadow-md transition-shadow bg-card", metaSettings.connection_type === 'wpp-web' && "opacity-50 pointer-events-none")}>
+                      <CardHeader className="bg-muted/30 border-b">
+                        <div className="flex items-center gap-3">
                           <div className="p-2 rounded-lg bg-primary/10 text-primary"><MessageSquare className="w-5 h-5" /></div>
                           <div>
-                            <CardTitle className="text-lg">WhatsApp API</CardTitle>
-                            <CardDescription className="text-[11px]">Conecte com a plataforma Business da Meta.</CardDescription>
+                            <CardTitle className="text-lg">Meta Cloud API (Official)</CardTitle>
+                            <CardDescription className="text-[11px]">Meta's high stability platform.</CardDescription>
                           </div>
                         </div>
                       </CardHeader>
