@@ -1489,8 +1489,19 @@ const CRM = () => {
                  activeTab === 'ai-agent' ? 'Agente I.A.' : 
                  activeTab === 'webhooks' ? 'Webhooks (API)' : 
                  activeTab === 'settings' ? 'Configurações' : activeTab}
-              </h1>
+               </h1>
             </div>
+            <div className="flex items-center gap-3">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setShowConnectionChoice(true)}
+                className="hidden sm:flex items-center gap-2 rounded-xl bg-primary/5 hover:bg-primary/10 border-primary/20 text-primary font-bold transition-all hover:scale-105"
+              >
+                <RefreshCcw className="w-4 h-4" />
+                Trocar WhatsApp
+              </Button>
+
             {activeTab === 'contacts' && (
               <div className="flex gap-2">
                 <Dialog open={isNewStatusDialogOpen} onOpenChange={setIsNewStatusDialogOpen}>
