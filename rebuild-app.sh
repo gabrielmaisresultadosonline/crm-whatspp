@@ -1,9 +1,5 @@
 #!/bin/bash
-
-echo "🚀 Iniciando reconstrução total do ecossistema..."
-
-# 1. Configuração do Servidor WhatsApp (wpp-server.cjs)
-echo "📱 Configurando Servidor WhatsApp com Sincronização..."
+echo "🚀 Iniciando reconstrução total..."
 cat <<'WPP' > wpp-server.cjs
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcodeTerminal = require('qrcode-terminal');
@@ -15,9 +11,9 @@ const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsI
 
 const client = new Client({
     authStrategy: new LocalAuth({ clientId: "renda_extra" }),
-    puppeteer: {
-        headless: true,
-        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-extensions']
+    puppeteer: { 
+        headless: true, 
+        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'] 
     }
 });
 
@@ -37,6 +33,10 @@ async function syncToCRM(msg) {
         const contact = await msg.getContact();
         const waId = msg.from.includes('@g.us') ? msg.from : (msg.fromMe ? msg.to : msg.from);
         
+        // Nome Real: Prioridade para o nome do Chat/Grupo, depois o PushName (nome que a pessoa salvou no WA dela)
+        const realName = chat.name || contact.pushname || contact.name || waId.split('@')[0];
+
+        // Sincronizar Contato/Grupo com Nome Real
         await fetch(\`\${SUPABASE_URL}/rest/v1/crm_contacts\`, {
             method: 'POST',
             headers: { 
@@ -47,9 +47,10 @@ async function syncToCRM(msg) {
             },
             body: JSON.stringify({
                 wa_id: waId,
-                name: chat.name || contact.pushname || waId.split('@')[0],
+                name: realName,
                 last_interaction: new Date().toISOString(),
-                status: 'responded'
+                status: 'responded',
+                source_type: msg.from.includes('@g.us') ? 'group' : 'direct'
             })
         });
 
@@ -59,6 +60,7 @@ async function syncToCRM(msg) {
         const contacts = await res.json();
         if (!contacts.length) return;
 
+        // Inserir Mensagem com Timestamp Real
         await fetch(\`\${SUPABASE_URL}/rest/v1/crm_messages\`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'apikey': ANON_KEY, 'Authorization': \`Bearer \${ANON_KEY}\` },
@@ -71,31 +73,41 @@ async function syncToCRM(msg) {
                 created_at: new Date(msg.timestamp * 1000).toISOString()
             })
         });
-        console.log(\`[DEBUG] Sincronizando: \${chat.name || waId}\`);
-    } catch (e) {}
+        console.log(\`[DEBUG] Sincronizando: \${realName}\`);
+    } catch (e) {
+        console.error("Erro na sincronização:", e.message);
+    }
 }
 
 client.on('qr', async (qr) => {
     const qrImage = await QRCode.toDataURL(qr);
     qrcodeTerminal.generate(qr, { small: true });
-    updateSession({ qr_code: qrImage, status: 'connecting' });
+    updateSession({ qr_code: qrImage, status: 'connecting', updated_at: new Date() });
 });
 
 client.on('ready', async () => {
-    console.log('✅ WhatsApp Conectado! Iniciando Sincronização...');
-    updateSession({ status: 'connected', qr_code: null });
+    console.log('✅ WhatsApp Conectado! Iniciando Sincronização de Nomes e Histórico...');
+    updateSession({ status: 'connected', qr_code: null, updated_at: new Date() });
+    
     const chats = await client.getChats();
-    for (const chat of chats.slice(0, 40)) {
-        const messages = await chat.fetchMessages({ limit: 30 });
-        for (const m of messages) { await syncToCRM(m); }
+    console.log(\`📦 Encontrados \${chats.length} chats ativos.\`);
+    
+    // Sincroniza mais chats para garantir que tudo apareça
+    for (const chat of chats.slice(0, 100)) {
+        const messages = await chat.fetchMessages({ limit: 50 });
+        for (const m of messages) {
+            await syncToCRM(m);
+        }
     }
-    console.log('🏁 Sincronização de histórico concluída!');
+    console.log('🏁 Sincronização inicial concluída.');
 });
 
 client.on('message', syncToCRM);
 client.on('message_create', (msg) => { if(msg.fromMe) syncToCRM(msg); });
+
 client.initialize();
 
+// Loop de comandos e mensagens pendentes
 setInterval(async () => {
     try {
         const res = await fetch(\`\${SUPABASE_URL}/rest/v1/wpp_bot_messages?status=eq.pending\`, {
@@ -110,15 +122,29 @@ setInterval(async () => {
                 body: JSON.stringify({ status: 'sent', sent_at: new Date() })
             });
         }
+        
+        // Comando de Logout
+        const cmdRes = await fetch(\`\${SUPABASE_URL}/rest/v1/wpp_bot_commands?processed=eq.false\`, {
+            headers: { 'apikey': ANON_KEY, 'Authorization': \`Bearer \${ANON_KEY}\` }
+        });
+        const cmds = await cmdRes.json();
+        for (const cmd of cmds) {
+            if (cmd.command === 'logout') {
+                await client.logout();
+                process.exit(0);
+            }
+            await fetch(\`\${SUPABASE_URL}/rest/v1/wpp_bot_commands?id=eq.\${cmd.id}\`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json', 'apikey': ANON_KEY, 'Authorization': \`Bearer \${ANON_KEY}\` },
+                body: JSON.stringify({ processed: true })
+            });
+        }
     } catch (e) {}
-}, 5000);
+}, 3000);
 WPP
 
-# 2. Reiniciar Processos
-echo "🔄 Reiniciando PM2..."
+# Limpeza e Reinicialização
 pm2 delete wpp-bot || true
 pm2 start wpp-server.cjs --name wpp-bot
 pm2 save
-
-echo "✅ RECONSTRUÇÃO COMPLETA!"
-echo "💡 DICA: Limpe o cache do seu navegador (Ctrl+F5) no site."
+echo "✅ SCRIPT ATUALIZADO! Nomes e Histórico em Sincronização."
