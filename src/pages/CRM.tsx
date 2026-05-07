@@ -1659,7 +1659,7 @@ const CRM = () => {
                                     )}
                                     onClick={() => setStatusFilter(s)}
                                   >
-                                    {s === 'all' ? '🚀 Todos' : getStatusLabel(s)}
+                                    {s === 'all' ? '🚀 All' : getStatusLabel(s)}
                                   </Badge>
                                 ))}
                               </div>
@@ -1703,7 +1703,7 @@ const CRM = () => {
                                             contact.flow_state === 'error' ? "bg-red-500/10 text-red-600" : "bg-primary/10 text-primary animate-pulse"
                                           )}
                                         >
-                                          {contact.flow_state === 'error' ? 'Erro' : 'Ativo'}
+                                          {contact.flow_state === 'error' ? 'Error' : 'Active'}
                                         </Badge>
                                         <button 
                                           onClick={(e) => {
