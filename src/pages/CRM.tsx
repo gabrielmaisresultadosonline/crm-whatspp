@@ -1767,7 +1767,7 @@ const CRM = () => {
                           </div>
                         </div>
                         <ScrollArea className="flex-1 p-3">
-                          {contacts.filter(c => c.status === status.value && c.last_interaction !== null).map(contact => (
+                          {contacts.filter(c => c.status === status.value).map(contact => (
                             <Card 
                               key={contact.id} 
                               draggable 
