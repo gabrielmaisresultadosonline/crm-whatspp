@@ -6,7 +6,9 @@ import { Label } from '@/components/ui/label';
 import { Logo } from '@/components/Logo';
 import { Lock, Mail, AlertCircle } from 'lucide-react';
 import { loginAdmin } from '@/lib/adminConfig';
+import { supabase } from "@/integrations/supabase/client";
 import { useToast } from '@/hooks/use-toast';
+
 
 const CRMLogin = () => {
   const [email, setEmail] = useState('');
