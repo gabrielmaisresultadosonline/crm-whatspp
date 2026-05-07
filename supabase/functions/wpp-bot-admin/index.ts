@@ -383,6 +383,39 @@ const handler = async (req: Request): Promise<Response> => {
       return json({ success: true });
     }
 
+    if (parsed.data.action === "restart") {
+      await supabase.from("wpp_bot_session").update({ 
+        request_qr: true, 
+        request_logout: false,
+        status: "connecting",
+        updated_at: new Date().toISOString() 
+      }).eq("id", SESSION_ID);
+      return json({ success: true });
+    }
+
+    if (parsed.data.action === "sendMessage") {
+      const phone = normalizePhone(parsed.data.to || parsed.data.phone);
+      if (!phone) return json({ success: false, error: "Invalid phone number" }, 400);
+
+      const messageData = {
+        phone,
+        message: parsed.data.text,
+        mediaUrl: parsed.data.mediaUrl,
+        mediaType: parsed.data.mediaType,
+        fileName: parsed.data.fileName,
+        isVoice: parsed.data.isVoice,
+        buttons: parsed.data.buttons,
+        scheduled_for: new Date().toISOString(),
+        status: "pending",
+        is_direct: true
+      };
+
+      const { data, error } = await supabase.from("wpp_bot_messages").insert(messageData).select().single();
+      if (error) throw error;
+      
+      return json({ success: true, message_id: data.id });
+    }
+
     if (parsed.data.action === "sendTest") {
       const phone = normalizePhone(parsed.data.phone);
       if (!phone) return json({ success: false, error: "Número inválido" }, 400);
