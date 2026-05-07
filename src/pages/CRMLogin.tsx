@@ -41,8 +41,8 @@ const CRMLogin = () => {
       <div className="glass-card glow-border p-8 max-w-md w-full animate-slide-up">
         <div className="flex flex-col items-center mb-8">
           <Logo size="md" />
-          <h1 className="text-2xl font-display font-bold mt-4">CRM Meta Access</h1>
-          <p className="text-muted-foreground text-sm">Gestão de Mensagens e Fluxos</p>
+          <h1 className="text-2xl font-display font-bold mt-4">Meta CRM Access</h1>
+          <p className="text-muted-foreground text-sm">Message and Flow Management</p>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-6">
