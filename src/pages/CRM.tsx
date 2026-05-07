@@ -123,7 +123,11 @@ const CRM = () => {
     business_hours_start: '08:00',
     business_hours_end: '18:00',
     business_hours_tz: 'America/Sao_Paulo',
-    outside_hours_message: 'Our administrators are not active at the moment. We will continue with automated service and will return with human assistance soon.'
+    outside_hours_message: 'Our administrators are not active at the moment. We will continue with automated service and will return with human assistance soon.',
+    connection_type: 'meta',
+    wpp_web_status: 'disconnected',
+    wpp_web_qr_code: null,
+    wpp_web_session_id: null
   });
   const [metrics, setMetrics] = useState<any>({
     sent_count: 0,
