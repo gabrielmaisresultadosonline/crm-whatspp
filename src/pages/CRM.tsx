@@ -3458,22 +3458,30 @@ const CRM = () => {
                         <div className="space-y-4">
                           <div className="flex flex-col gap-4 p-4 bg-muted/30 rounded-xl border">
                             <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Select API Type</Label>
-                            <div className="flex bg-muted p-1 rounded-lg">
-                              <Button 
-                                variant={metaSettings.connection_type !== 'wpp-web' ? 'secondary' : 'ghost'} 
-                                className="flex-1 text-xs"
-                                onClick={() => setMetaSettings({...metaSettings, connection_type: 'meta'})}
-                              >
-                                <Facebook className="w-4 h-4 mr-2" /> Meta API
-                              </Button>
-                              <Button 
-                                variant={metaSettings.connection_type === 'wpp-web' ? 'secondary' : 'ghost'} 
-                                className="flex-1 text-xs"
-                                onClick={() => setMetaSettings({...metaSettings, connection_type: 'wpp-web'})}
-                              >
-                                <LinkIcon className="w-4 h-4 mr-2" /> Wpp-Web.js
-                              </Button>
-                            </div>
+                             <div className="flex bg-muted p-1 rounded-lg">
+                               <Button 
+                                 variant={metaSettings.connection_type !== 'wpp-web' ? 'secondary' : 'ghost'} 
+                                 className="flex-1 text-xs"
+                                 onClick={() => {
+                                   setMetaSettings({...metaSettings, connection_type: 'meta'});
+                                   handleSaveSettings({...metaSettings, connection_type: 'meta'});
+                                 }}
+                               >
+                                 <Facebook className="w-4 h-4 mr-2" /> Meta API
+                               </Button>
+                               <Button 
+                                 variant={metaSettings.connection_type === 'wpp-web' ? 'secondary' : 'ghost'} 
+                                 className="flex-1 text-xs"
+                                 onClick={() => {
+                                   setMetaSettings({...metaSettings, connection_type: 'wpp-web'});
+                                   handleSaveSettings({...metaSettings, connection_type: 'wpp-web'});
+                                   navigate('/whatsapp-qr');
+                                 }}
+                               >
+                                 <LinkIcon className="w-4 h-4 mr-2" /> QR Code (Painel Novo)
+                               </Button>
+                             </div>
+
                             <p className="text-[10px] text-muted-foreground">
                               {metaSettings.connection_type === 'wpp-web' 
                                 ? "Using WhatsApp Web emulation (requires scanning QR code)." 
