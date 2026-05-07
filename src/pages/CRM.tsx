@@ -426,12 +426,20 @@ const CRM = () => {
     if (!newMessage.trim() || !selectedContact || sendingMessage) return;
     setSendingMessage(true);
     try {
-      const { data, error } = await supabase.functions.invoke('meta-whatsapp-crm', {
-        body: { action: 'sendMessage', to: selectedContact.wa_id, text: newMessage }
+      const action = metaSettings.connection_type === 'wpp-web' ? 'sendMessage' : 'sendMessage';
+      const functionName = metaSettings.connection_type === 'wpp-web' ? 'wpp-bot-admin' : 'meta-whatsapp-crm';
+      
+      const { data, error } = await supabase.functions.invoke(functionName, {
+        body: { 
+          action: 'sendMessage', 
+          to: selectedContact.wa_id, 
+          phone: selectedContact.wa_id, // Para wpp-bot-admin
+          text: newMessage 
+        }
       });
       if (error) throw error;
       if (!data.success) {
-        throw new Error(data.error || "Erro ao enviar mensagem pela Meta");
+        throw new Error(data.error || "Erro ao enviar mensagem");
       }
       await fetchMessages(selectedContact.id);
       setNewMessage('');
@@ -441,6 +449,7 @@ const CRM = () => {
       setSendingMessage(false);
     }
   };
+
 
   const handleUpdateTemplateKnowledge = async (templateId: string, knowledge: string) => {
     setUpdatingKnowledge(templateId);
