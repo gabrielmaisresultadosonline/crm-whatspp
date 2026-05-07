@@ -26,7 +26,7 @@ const DEFAULT_SESSION = {
 };
 
 const AdminActionSchema = z.object({
-  action: z.enum(["getStatus", "requestQr", "logout", "saveSettings", "retryMessage", "deleteMessage", "enqueueLead", "sendNow", "sendTest"]),
+  action: z.enum(["getStatus", "requestQr", "logout", "saveSettings", "retryMessage", "deleteMessage", "enqueueLead", "sendNow", "sendTest", "sendMessage", "restart"]),
   adminToken: z.string().optional(),
   message_template: z.string().max(4000).optional(),
   delay_minutes: z.coerce.number().int().min(1).max(10080).optional(),
@@ -35,6 +35,13 @@ const AdminActionSchema = z.object({
   lead_id: z.string().uuid().nullable().optional(),
   lead_name: z.string().max(255).nullable().optional(),
   phone: z.string().max(40).optional(),
+  to: z.string().optional(),
+  text: z.string().optional(),
+  mediaUrl: z.string().url().nullable().optional(),
+  mediaType: z.enum(["image", "video", "audio", "document"]).nullable().optional(),
+  fileName: z.string().optional(),
+  isVoice: z.boolean().optional(),
+  buttons: z.array(z.object({ id: z.string(), text: z.string() })).optional(),
 });
 
 async function readBody(req: Request) {
@@ -374,6 +381,39 @@ const handler = async (req: Request): Promise<Response> => {
         updated_at: new Date().toISOString(),
       }).eq("id", parsed.data.message_id);
       return json({ success: true });
+    }
+
+    if (parsed.data.action === "restart") {
+      await supabase.from("wpp_bot_session").update({ 
+        request_qr: true, 
+        request_logout: false,
+        status: "connecting",
+        updated_at: new Date().toISOString() 
+      }).eq("id", SESSION_ID);
+      return json({ success: true });
+    }
+
+    if (parsed.data.action === "sendMessage") {
+      const phone = normalizePhone(parsed.data.to || parsed.data.phone);
+      if (!phone) return json({ success: false, error: "Invalid phone number" }, 400);
+
+      const messageData = {
+        phone,
+        message: parsed.data.text,
+        mediaUrl: parsed.data.mediaUrl,
+        mediaType: parsed.data.mediaType,
+        fileName: parsed.data.fileName,
+        isVoice: parsed.data.isVoice,
+        buttons: parsed.data.buttons,
+        scheduled_for: new Date().toISOString(),
+        status: "pending",
+        is_direct: true
+      };
+
+      const { data, error } = await supabase.from("wpp_bot_messages").insert(messageData).select().single();
+      if (error) throw error;
+      
+      return json({ success: true, message_id: data.id });
     }
 
     if (parsed.data.action === "sendTest") {

@@ -26,11 +26,14 @@ serve(async (req) => {
       .eq('id', '00000000-0000-0000-0000-000000000001')
       .single()
 
-    if (!settings?.meta_access_token) {
-      throw new Error('Meta API credentials not configured')
+    const { connection_type } = settings || {};
+    const isWppWeb = connection_type === 'wpp-web';
+
+    if (!isWppWeb && !settings?.meta_access_token) {
+      throw new Error('Meta API credentials not configured');
     }
 
-    const { meta_access_token, meta_phone_number_id } = settings
+    const { meta_access_token, meta_phone_number_id } = settings || {};
 
     if (action === 'getTemplates') {
       const { meta_waba_id } = settings
@@ -599,6 +602,59 @@ const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 // sanitizeMetaLink removed as we now use uploadMediaToMeta for all media types to ensure delivery
 
 async function handleInternalSendMessage(supabase: any, meta_phone_number_id: string, meta_access_token: string, params: any, contact: any) {
+  const { to, text, audioUrl, imageUrl, videoUrl, documentUrl, fileName, buttons, headerText, footerText, isVoice } = params
+  
+  // Fetch settings to check connection type
+  const { data: settings } = await supabase
+    .from('crm_settings')
+    .select('connection_type')
+    .eq('id', '00000000-0000-0000-0000-000000000001')
+    .single();
+
+  if (settings?.connection_type === 'wpp-web') {
+    console.log(`Sending message via Wpp-Web.js to ${to}...`);
+    const { data, error } = await supabase.functions.invoke('wpp-bot-admin', {
+      body: { 
+        action: 'sendMessage', 
+        to, 
+        text, 
+        mediaUrl: audioUrl || imageUrl || videoUrl || documentUrl,
+        mediaType: audioUrl ? 'audio' : imageUrl ? 'image' : videoUrl ? 'video' : documentUrl ? 'document' : null,
+        fileName,
+        isVoice,
+        buttons: buttons?.map((b: any) => ({ id: b.id, text: b.text }))
+      }
+    });
+
+    if (error) {
+       console.error('Wpp-Web Error:', error);
+       return new Response(JSON.stringify({ success: false, error: 'Failed to send via Wpp-Web' }), {
+         status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+       });
+    }
+
+    // Insert into crm_messages for history
+    if (contact) {
+      await supabase.from('crm_messages').insert({
+        contact_id: contact.id,
+        direction: 'outbound',
+        content: text || '[Media]',
+        message_type: audioUrl ? 'audio' : imageUrl ? 'image' : videoUrl ? 'video' : documentUrl ? 'document' : 'text',
+        media_url: audioUrl || imageUrl || videoUrl || documentUrl,
+        status: 'sent'
+      });
+      await supabase.from('crm_contacts').update({ 
+        total_messages_sent: (contact.total_messages_sent || 0) + 1,
+        last_interaction: new Date().toISOString()
+      }).eq('id', contact.id);
+      await supabase.rpc('increment_crm_metric', { metric_column: 'sent_count' });
+    }
+
+    return new Response(JSON.stringify({ success: true, result: data }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+
   const { to, text, audioUrl, imageUrl, videoUrl, documentUrl, fileName, buttons, headerText, footerText, isVoice } = params
   
   let body: any = {
